@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FiguritasBot — Dashboard de Negocio | Intercorpfest 2026</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cds-background: #f4f4f4;
+      --cds-layer-01: #ffffff;
+      --cds-layer-02: #f4f4f4;
+      --cds-layer-hover-01: #e8e8e8;
+      --cds-border-subtle-00: #e0e0e0;
+      --cds-border-subtle-01: #c6c6c6;
+      --cds-text-primary: #161616;
+      --cds-text-secondary: #525252;
+      --cds-text-helper: #6f6f6f;
+      --gold: #8a6914;
+      --gold-10: rgba(138,105,20,0.08);
+      --gold-20: rgba(138,105,20,0.18);
+      --blue: #0f62fe;
+      --blue-10: rgba(15,98,254,0.08);
+      --green: #198038;
+      --red: #da1e28;
+      --amber: #b28600;
+      --purple: #6929c4;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cds-background); color: var(--cds-text-primary); font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; min-height: 100vh; line-height: 1.5; }
+
+    .icon { width: 16px; height: 16px; display: inline-block; vertical-align: middle; fill: currentColor; flex-shrink: 0; }
+    .icon-xs { width: 12px; height: 12px; }
+    .icon-sm { width: 14px; height: 14px; }
+    .icon-lg { width: 20px; height: 20px; }
+    .icon-xl { width: 24px; height: 24px; }
+    .mono { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+    .up { color: var(--green); }
+    .dn { color: var(--red); }
+
+    /* ── SHELL ── */
+    .shell { display: grid; grid-template-rows: 48px 1fr; min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar { background: #0f62fe; border-bottom: 1px solid #0043ce; display: flex; align-items: center; padding: 0 16px; position: sticky; top: 0; z-index: 200; }
+    .tb-logo { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #fff; padding: 0 16px 0 0; border-right: 1px solid rgba(255,255,255,.2); height: 48px; white-space: nowrap; }
+    .tb-logo-sub { color: rgba(255,255,255,.65); font-weight: 400; font-size: 12px; }
+    .tb-section { color: rgba(255,255,255,.75); font-size: 14px; padding: 0 16px; border-right: 1px solid rgba(255,255,255,.2); height: 48px; display: flex; align-items: center; }
+    .live-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6fdc8c; background: rgba(111,220,140,.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(111,220,140,.35); margin-left: 16px; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #6fdc8c; animation: blink 1.4s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: .2 } }
+    .tb-agent-tag { display: flex; align-items: center; gap: 5px; font-size: 11px; padding: 0 12px; height: 48px; border-left: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7); }
+    .tb-agent-dot { width: 6px; height: 6px; border-radius: 50%; background: #6fdc8c; }
+    .tb-right { margin-left: auto; display: flex; align-items: center; height: 48px; }
+    .tb-stat { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; height: 48px; border-left: 1px solid rgba(255,255,255,.2); }
+    .tb-stat-lbl { font-size: 10px; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .06em; }
+    .tb-stat-val { font-size: 14px; font-weight: 600; color: #fff; }
+    .tb-clock { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: #fff; padding: 0 20px; height: 48px; display: flex; align-items: center; border-left: 1px solid rgba(255,255,255,.2); }
+
+    /* ── MAIN ── */
+    .main { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+
+    /* ── TICKER ── */
+    .ticker { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); border-left: 3px solid var(--gold); overflow: hidden; }
+    .ticker-hd { font-size: 10px; font-weight: 600; letter-spacing: .12em; color: var(--gold); padding: 4px 14px; background: var(--gold-10); border-bottom: 1px solid var(--gold-20); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+    .ticker-scroll { overflow: hidden; height: 32px; display: flex; align-items: center; }
+    .ticker-inner { display: flex; white-space: nowrap; animation: tick 50s linear infinite; }
+    @keyframes tick { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+    .t-item { padding: 0 24px; font-size: 12px; color: var(--cds-text-secondary); display: flex; align-items: center; gap: 8px; border-right: 1px solid var(--cds-border-subtle-00); height: 32px; }
+    .t-item b { color: var(--cds-text-primary); font-weight: 500; }
+
+    /* ── INJECTION PANELS GRID ── */
+    .injection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── INJECTION PANEL ── */
+    .inj-panel { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); border-top: 4px solid var(--inj-color, var(--blue)); box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; flex-direction: column; }
+    .inj-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--cds-border-subtle-00); display: flex; align-items: flex-start; gap: 12px; }
+    .inj-badge { width: 30px; height: 30px; border-radius: 50%; background: var(--inj-color, var(--blue)); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+    .inj-titles { flex: 1; min-width: 0; }
+    .inj-title { font-size: 13px; font-weight: 700; color: var(--cds-text-primary); text-transform: uppercase; letter-spacing: .06em; }
+    .inj-subtitle { font-size: 11px; color: var(--cds-text-helper); margin-top: 3px; line-height: 1.4; }
+    .inj-kpi { text-align: right; flex-shrink: 0; }
+    .inj-kpi-val { font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 700; line-height: 1; color: var(--inj-color, var(--blue)); }
+    .inj-kpi-lbl { font-size: 10px; color: var(--cds-text-helper); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
+    .inj-chart-area { padding: 12px 12px 4px; position: relative; }
+    .inj-footer { padding: 10px 16px 12px; display: flex; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--cds-border-subtle-00); }
+    .inj-stat { display: flex; flex-direction: column; gap: 2px; }
+    .inj-stat-lbl { font-size: 10px; color: var(--cds-text-helper); text-transform: uppercase; letter-spacing: .07em; }
+    .inj-stat-val { font-size: 15px; font-weight: 700; color: var(--cds-text-primary); font-family: 'IBM Plex Mono', monospace; }
+
+    /* ── ALERT BAR ── */
+    .inj-alert { display: none; align-items: center; gap: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--red); background: rgba(218,30,40,.06); border-top: 1px solid rgba(218,30,40,.20); }
+    .inj-alert.active { display: flex; }
+    @keyframes pulse-alert { 0%, 100% { opacity: 1 } 50% { opacity: .5 } }
+    .inj-alert.active { animation: pulse-alert 2s infinite; }
+
+    /* ── BACKORDER LIST (Panel 3) ── */
+    .backorder-list { padding: 4px 12px 8px; display: flex; flex-direction: column; gap: 4px; max-height: 130px; overflow-y: auto; flex-shrink: 0; }
+    .backorder-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 10px; background: rgba(105,41,196,.06); border-left: 3px solid var(--purple); font-size: 12px; }
+    .backorder-item-name { font-weight: 500; }
+    .backorder-item-eta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--purple); font-weight: 600; }
+    .empty-state { font-size: 12px; color: var(--cds-text-helper); text-align: center; padding: 16px; }
+
+    /* ── SECTION LABEL ── */
+    .section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--cds-text-helper); display: flex; align-items: center; gap: 10px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--cds-border-subtle-00); }
+
+    /* ── CATALOG CARD ── */
+    .card { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+    .card-hd { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--cds-text-helper); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--cds-border-subtle-00); padding-bottom: 10px; }
+    .card-hd span { font-size: 11px; color: var(--cds-text-secondary); font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--cds-text-helper); padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--cds-border-subtle-01); white-space: nowrap; background: #f4f4f4; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--cds-border-subtle-00); font-size: 13px; vertical-align: middle; }
+    tr.row-crit td { background: rgba(218,30,40,.04); }
+    tr.row-warn td { background: rgba(241,194,27,.03); }
+    tr:hover td { background: var(--cds-layer-hover-01); }
+    .tag { font-size: 11px; padding: 2px 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .tag-leg { background: rgba(138,105,20,.10); color: var(--gold); }
+    .tag-est { background: rgba(105,41,196,.10); color: var(--purple); }
+    .tag-bas { background: rgba(15,98,254,.10); color: var(--blue); }
+    .stock-cell { display: flex; flex-direction: column; gap: 4px; }
+    .stock-top { display: flex; align-items: center; justify-content: space-between; }
+    .stock-nums { font-size: 12px; font-weight: 700; }
+    .stock-pct { font-size: 10px; color: var(--cds-text-helper); }
+    .stock-track { height: 4px; background: rgba(0,0,0,.10); overflow: hidden; }
+    .stock-fill { height: 100%; transition: width .5s ease; }
+    .crit-label { font-size: 10px; font-weight: 700; color: var(--red); letter-spacing: .05em; text-transform: uppercase; }
+    .price-now { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 700; }
+    .price-open { font-size: 10px; color: var(--cds-text-helper); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--cds-border-subtle-01); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="ico-lightning" viewBox="0 0 16 16"><path d="M9.5 1L4 9h4l-1.5 6L13 7H9l.5-6z"/></symbol>
+  <symbol id="ico-cart" viewBox="0 0 16 16"><path d="M5.5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM1 1h2l.6 2H14l-2 7H5L3 2H1zm4.4 4l1.2 4h5.8l1.2-4H5.4z"/></symbol>
+  <symbol id="ico-tag" viewBox="0 0 16 16"><path d="M1 1v6.5l7.5 7.5 6.5-6.5L7.5 1H1zm3 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></symbol>
+  <symbol id="ico-clipboard" viewBox="0 0 16 16"><path d="M6 1a1 1 0 0 0-1 1H3v13h10V2h-2a1 1 0 0 0-1-1H6zm0 1h4v1H6V2zM5 6h6v1H5V6zm0 3h6v1H5V9zm0 3h4v1H5v-1z"/></symbol>
+  <symbol id="ico-box" viewBox="0 0 16 16"><path d="M8 1L1 4.5v7L8 15l7-3.5v-7L8 1zM8 2.6l4.8 2.4L8 7.4 3.2 5 8 2.6zM2 5.9l5.5 2.7v5.5L2 11.4V5.9zm6.5 8.2V8.6L14 5.9v5.5l-5.5 2.7z"/></symbol>
+  <symbol id="ico-check" viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.4 5L7.5 10.5 4.6 8l1-1L7.5 8.5 10.4 5l1 1z"/></symbol>
+  <symbol id="ico-trend-up" viewBox="0 0 16 16"><path d="M10 3h4v4h-1V4.4L8.5 9 6 6.5l-4 4-.7-.7L6 5.3l2.5 2.5L12.6 4H10V3z"/></symbol>
+  <symbol id="ico-trend-down" viewBox="0 0 16 16"><path d="M10 9h4v4h-1v-2.6L8.5 15 6 12.5l-4 4-.7-.7L6 11.3l2.5 2.5L12.6 10H10V9z"/></symbol>
+  <symbol id="ico-chart" viewBox="0 0 16 16"><path d="M2 13h12v1H1V2h1v11zm3-8v7h2V5H5zm3 3v4h2V8H8zm3-2v6h2V6h-2z"/></symbol>
+  <symbol id="ico-truck" viewBox="0 0 16 16"><path d="M1 3v8h1a2 2 0 0 0 4 0h4a2 2 0 0 0 4 0h1V8l-2-3h-3V3H1zm1 1h7v4H2V4zm9 1h2l1.5 2.3V10H13V5zM4 10a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm8 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></symbol>
+  <symbol id="ico-camera" viewBox="0 0 16 16"><path d="M6 2L5 4H2v10h12V4h-3l-1-2H6zm2 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 1a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></symbol>
+  <symbol id="ico-coin" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="8" y="11" text-anchor="middle" font-size="8" font-weight="700" fill="currentColor">$</text></symbol>
+  <symbol id="ico-warning" viewBox="0 0 16 16"><path d="M8 1L1 14h14L8 1zm0 3.5L12.5 13h-9L8 4.5zM7.5 7v3h1V7h-1zm0 4v1h1v-1h-1z"/></symbol>
+  <symbol id="ico-star" viewBox="0 0 16 16"><path d="M8 1l2.2 4.6L15 6.3l-3.5 3.4.8 4.9L8 12.3 3.7 14.6l.8-4.9L1 6.3l4.8-.7L8 1z"/></symbol>
+  <symbol id="ico-sparkle" viewBox="0 0 16 16"><path d="M8 0l1.5 5.5L15 8l-5.5 1.5L8 15l-1.5-5.5L1 8l5.5-1.5z"/></symbol>
+  <symbol id="ico-circle" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="ico-minus" viewBox="0 0 16 16"><rect x="3" y="7.25" width="10" height="1.5" rx=".5"/></symbol>
+  <symbol id="ico-ball" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.2"/><ellipse cx="8" cy="8" rx="3" ry="6.5" fill="none" stroke="currentColor" stroke-width="1"/><line x1="1.5" y1="8" x2="14.5" y2="8" stroke="currentColor" stroke-width="1"/></symbol>
+  <symbol id="ico-lock" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M5 7V5a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+</svg>
+
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar" role="banner">
+    <div class="tb-logo">
+      <svg class="icon icon-xl" style="color:#fff" aria-hidden="true"><use href="#ico-ball"/></svg>
+      <div><div>Figuritas</div><div class="tb-logo-sub">Dashboard de Negocio</div></div>
+    </div>
+    <div class="tb-section">Mundial 2026</div>
+    <div class="live-pill"><div class="dot"></div> EN VIVO</div>
+    <div class="tb-agent-tag"><div class="tb-agent-dot"></div> Vendedor</div>
+    <div class="tb-agent-tag"><div class="tb-agent-dot"></div> Precios</div>
+    <div class="tb-agent-tag"><div class="tb-agent-dot"></div> Reservas</div>
+    <div class="tb-agent-tag"><div class="tb-agent-dot"></div> Despachos</div>
+    <div class="tb-right">
+      <div class="tb-stat"><span class="tb-stat-lbl">Participantes</span><span class="tb-stat-val" id="statUsers">—</span></div>
+      <div class="tb-stat"><span class="tb-stat-lbl">Moneda</span><span class="tb-stat-val" style="color:#f1c21b">IBMcoins</span></div>
+      <div class="tb-stat"><span class="tb-stat-lbl">API</span><span class="tb-stat-val" id="apiStatus" style="color:rgba(255,255,255,0.55)">—</span></div>
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <main class="main" role="main">
+
+    <!-- TICKER -->
+    <div class="ticker" role="marquee" aria-label="Eventos en tiempo real">
+      <div class="ticker-hd">
+        <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-lightning"/></svg>
+        Eventos de negocio en tiempo real
+      </div>
+      <div class="ticker-scroll"><div class="ticker-inner" id="tickerInner"></div></div>
+    </div>
+
+    <!-- 4 INJECTION PANELS -->
+    <div class="injection-grid">
+
+      <!-- PANEL 1: Rendimiento de Precios -->
+      <div class="inj-panel" style="--inj-color:var(--red)" role="region" aria-label="Panel 1: Rendimiento de Precios">
+        <div class="inj-header">
+          <div class="inj-badge">01</div>
+          <div class="inj-titles">
+            <div class="inj-title">Rendimiento de Precios</div>
+            <div class="inj-subtitle">Agente Pricing &amp; Ventas · precio promedio por venta en la sesión</div>
+          </div>
+          <div class="inj-kpi">
+            <div class="inj-kpi-val" id="p1KpiVal">—</div>
+            <div class="inj-kpi-lbl">precio prom. venta</div>
+          </div>
+        </div>
+        <div class="inj-chart-area" style="height:240px">
+          <canvas id="panel1Chart" aria-label="Tendencia precio promedio de venta"></canvas>
+        </div>
+        <div class="inj-footer">
+          <div class="inj-stat"><span class="inj-stat-lbl">Ventas totales</span><span class="inj-stat-val" id="p1Sales">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">IBMcoins totales</span><span class="inj-stat-val" id="p1Coins">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">Precio mín. sesión</span><span class="inj-stat-val" id="p1Min">—</span></div>
+        </div>
+        <div class="inj-alert" id="p1Alert">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
+          ALERTA: Precio promedio de venta por debajo del umbral mínimo
+        </div>
+      </div>
+
+      <!-- PANEL 2: Estado del Inventario -->
+      <div class="inj-panel" style="--inj-color:var(--amber)" role="region" aria-label="Panel 2: Estado del Inventario">
+        <div class="inj-header">
+          <div class="inj-badge" style="background:var(--amber)">02</div>
+          <div class="inj-titles">
+            <div class="inj-title">Estado del Inventario</div>
+            <div class="inj-subtitle">Agente Ventas · disponibilidad de stock por figurita</div>
+          </div>
+          <div class="inj-kpi">
+            <div class="inj-kpi-val" id="p2KpiVal" style="color:var(--amber)">—</div>
+            <div class="inj-kpi-lbl">figuritas críticas</div>
+          </div>
+        </div>
+        <div class="inj-chart-area" style="height:240px">
+          <canvas id="panel2Chart" aria-label="Stock disponible por figurita"></canvas>
+        </div>
+        <div class="inj-footer">
+          <div class="inj-stat"><span class="inj-stat-lbl">Unidades disponibles</span><span class="inj-stat-val" id="p2Available">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">Unidades vendidas</span><span class="inj-stat-val" id="p2Sold">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">Sin stock</span><span class="inj-stat-val" id="p2Empty">—</span></div>
+        </div>
+        <div class="inj-alert" id="p2Alert">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
+          ALERTA: Más de la mitad del catálogo en nivel de stock crítico
+        </div>
+      </div>
+
+      <!-- PANEL 3: Gestión de Reservas -->
+      <div class="inj-panel" style="--inj-color:var(--purple)" role="region" aria-label="Panel 3: Gestión de Reservas">
+        <div class="inj-header">
+          <div class="inj-badge" style="background:var(--purple)">03</div>
+          <div class="inj-titles">
+            <div class="inj-title">Gestión de Reservas</div>
+            <div class="inj-subtitle">Agente Reservas · reservas activas y órdenes con entrega diferida</div>
+          </div>
+          <div class="inj-kpi">
+            <div class="inj-kpi-val" id="p3KpiVal" style="color:var(--purple)">—</div>
+            <div class="inj-kpi-lbl">reservas activas</div>
+          </div>
+        </div>
+        <div class="inj-chart-area" style="height:160px">
+          <canvas id="panel3Chart" aria-label="Evolución reservas activas y backorders"></canvas>
+        </div>
+        <div class="backorder-list" id="p3BackorderList">
+          <div class="empty-state">Sin backorders activos</div>
+        </div>
+        <div class="inj-footer">
+          <div class="inj-stat"><span class="inj-stat-lbl">Backorders activos</span><span class="inj-stat-val" id="p3Backorders">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">Entrega estimada</span><span class="inj-stat-val" id="p3Eta">—</span></div>
+        </div>
+        <div class="inj-alert" id="p3Alert">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
+          ALERTA: Órdenes con entrega diferida detectadas — tiempos de espera elevados
+        </div>
+      </div>
+
+      <!-- PANEL 4: Estado del Sistema -->
+      <div class="inj-panel" style="--inj-color:var(--red)" role="region" aria-label="Panel 4: Estado del Sistema">
+        <div class="inj-header">
+          <div class="inj-badge">04</div>
+          <div class="inj-titles">
+            <div class="inj-title">Estado del Sistema</div>
+            <div class="inj-subtitle">Todos los agentes · actividad de eventos y habilitación de compras</div>
+          </div>
+          <div class="inj-kpi">
+            <div class="inj-kpi-val" id="p4KpiVal" style="font-size:18px;color:var(--green)">ACTIVO</div>
+            <div class="inj-kpi-lbl">estado sistema</div>
+          </div>
+        </div>
+        <div class="inj-chart-area" style="height:160px">
+          <canvas id="panel4Chart" aria-label="Tasa de eventos por ventana de 30 segundos"></canvas>
+        </div>
+        <div id="p4StatusBar" style="padding:8px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--cds-border-subtle-00);border-bottom:1px solid var(--cds-border-subtle-00)">
+          <svg class="icon icon-sm" id="p4StatusIcon" aria-hidden="true" style="color:var(--green)"><use href="#ico-check"/></svg>
+          <span id="p4StatusText" style="font-size:12px;font-weight:600;color:var(--green)">Compras habilitadas</span>
+        </div>
+        <div class="inj-footer">
+          <div class="inj-stat"><span class="inj-stat-lbl">Compras</span><span class="inj-stat-val" id="p4Purchases">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">Última reposición</span><span class="inj-stat-val" id="p4Replenishment">—</span></div>
+          <div class="inj-stat"><span class="inj-stat-lbl">Eventos / 30s</span><span class="inj-stat-val" id="p4EventRate">0</span></div>
+        </div>
+        <div class="inj-alert" id="p4Alert">
+          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-lock"/></svg>
+          ALERTA CRÍTICA: Sistema de compras deshabilitado — contactar soporte técnico
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION DIVIDER -->
+    <div class="section-label">Catálogo completo de figuritas</div>
+
+    <!-- CATALOG TABLE -->
+    <div class="card" role="region" aria-label="Catálogo de figuritas">
+      <div class="card-hd">
+        Catálogo de figuritas — stock &amp; precios dinámicos
+        <span>
+          <span style="color:var(--red);display:inline-flex;align-items:center;gap:3px">
+            <svg class="icon icon-xs" aria-hidden="true"><use href="#ico-warning"/></svg> crítico &lt;10% stock
+          </span> ·
+          <span id="lastUpdate" style="color:var(--cds-text-helper)"></span>
+        </span>
+      </div>
+      <div class="tbl-wrap">
+        <table aria-label="Catálogo de figuritas con stock y precios">
+          <thead>
+            <tr>
+              <th style="width:20%">Figurita</th>
+              <th style="width:8%">Categoría</th>
+              <th style="width:18%">Stock</th>
+              <th style="width:13%">Precio actual</th>
+              <th style="width:8%">Var. sesión</th>
+              <th style="width:8%">Vendidas</th>
+              <th style="width:8%">Reservadas</th>
+              <th style="width:10%">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const API = 'https://figuritas-api.2ayleunx80ut.us-south.codeengine.appdomain.cloud';
+const REFRESH_INTERVAL = 15000;
+const CAT_COLORS = { LEGENDARIA: '#c9a227', ESTRELLA: '#a56eff', BASE: '#4589ff' };
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+let inventory = [];
+let revenue = { totalSales: 0, totalIbmcoins: 0, avgSalePrice: 0 };
+let activeReservations = [];
+let backorders = [];
+let demoState = { purchasesEnabled: true };
+let tickerEvents = [];
+let openingPrices = {};
+
+// Time-series (built from polling snapshots)
+let priceTimeSeries = [];       // [{label, avgPrice}]
+let reservationTimeSeries = []; // [{label, active, backorders}]
+let eventRateWindows = [];      // [{label, count}]
+let currentWindowCount = 0;
+let windowStartTime = Date.now();
+
+// Chart instances
+let panel1Chart = null;
+let panel2Chart = null;
+let panel3Chart = null;
+let panel4Chart = null;
+
+// ── CLOCK ───────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  document.getElementById('lastUpdate').textContent = 'Actualizado: ' + now.toLocaleTimeString('es-MX');
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ── API FETCH ───────────────────────────────────────────────────────────────
+async function apiFetch(path) {
+  try {
+    const r = await fetch(API + path);
+    if (!r.ok) throw new Error(r.status);
+    document.getElementById('apiStatus').textContent = 'Online';
+    document.getElementById('apiStatus').style.color = '#6fdc8c';
+    return r.json();
+  } catch (e) {
+    document.getElementById('apiStatus').textContent = 'Offline';
+    document.getElementById('apiStatus').style.color = '#ff8389';
+    return null;
+  }
+}
+
+// ── DATA LOADERS ─────────────────────────────────────────────────────────────
+async function loadRevenue() {
+  const d = await apiFetch('/v1/dashboard/revenue');
+  if (!d) return;
+  revenue = {
+    totalSales:    d.total_sales    ?? d.totalSales    ?? 0,
+    totalIbmcoins: d.total_ibmcoins ?? d.totalIbmcoins ?? 0,
+    avgSalePrice:  d.avg_sale_price ?? d.avgSalePrice  ?? 0,
+  };
+  const label = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  priceTimeSeries.push({ label, avgPrice: revenue.avgSalePrice });
+  if (priceTimeSeries.length > 25) priceTimeSeries.shift();
+  renderPanel1();
+}
+
+async function loadInventory() {
+  const d = await apiFetch('/v1/dashboard/inventory');
+  if (!d || !d.items) return;
+  inventory = d.items.map(f => ({
+    stickerId:      f.sticker_id      || f.stickerId,
+    playerName:     f.player_name     || f.playerName,
+    country:        f.country,
+    team:           f.team,
+    category:       f.category,
+    basePrice:      f.base_price      ?? f.basePrice      ?? 0,
+    totalStock:     f.total_stock     ?? f.totalStock      ?? 0,
+    availableStock: f.available_stock ?? f.availableStock  ?? 0,
+    reservedStock:  f.reserved_stock  ?? f.reservedStock   ?? 0,
+    soldStock:      f.sold_stock      ?? f.soldStock       ?? 0,
+  }));
+  inventory.forEach(f => {
+    const key = f.stickerId || f.playerName;
+    if (key && !(key in openingPrices)) openingPrices[key] = f.basePrice;
+  });
+  renderPanel2();
+  renderTable();
+}
+
+async function loadReservations() {
+  const d = await apiFetch('/v1/dashboard/reservations?status=ACTIVE');
+  if (!d || !d.items) return;
+  activeReservations = d.items;
+  const label = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  reservationTimeSeries.push({ label, active: activeReservations.length, backorders: backorders.length });
+  if (reservationTimeSeries.length > 25) reservationTimeSeries.shift();
+  renderPanel3();
+}
+
+async function loadBackorders() {
+  const d = await apiFetch('/v1/backorders?limit=50');
+  if (!d || !d.items) return;
+  backorders = d.items.filter(b => {
+    const s = (b.status || '').toUpperCase();
+    return s !== 'CANCELLED' && s !== 'COMPLETED';
+  });
+  renderPanel3();
+}
+
+async function loadDemoState() {
+  const d = await apiFetch('/v1/admin/demo/state');
+  if (!d) return;
+  demoState = {
+    purchasesEnabled:   d.purchases_enabled     ?? d.purchasesEnabled   ?? true,
+    lastReplenishmentAt: d.last_replenishment_at || d.lastReplenishmentAt,
+  };
+  renderPanel4();
+}
+
+async function loadUsers() {
+  const d = await apiFetch('/v1/users?limit=100');
+  if (d && d.items) document.getElementById('statUsers').textContent = d.items.length;
+}
+
+// ── SSE STREAM ──────────────────────────────────────────────────────────────
+function startSSE() {
+  try {
+    const evtSource = new EventSource(API + '/v1/business-events/stream');
+    evtSource.onmessage = (e) => {
+      try { handleStreamEvent(JSON.parse(e.data)); } catch (_) {}
+    };
+    evtSource.onerror = () => setTimeout(startSSE, 5000);
+  } catch (_) {
+    setTimeout(startSSE, 5000);
+  }
+}
+
+function handleStreamEvent(ev) {
+  const type    = ev.eventType || ev.event_type || ev.type || '';
+  const payload = ev.payload || ev;
+  const playerName = payload.playerName || payload.player_name || payload.sticker_name || '';
+  const price      = payload.price || payload.finalPrice || payload.calculatedPrice || '';
+
+  tickerEvents.unshift({ type, playerName, price, ts: new Date() });
+  if (tickerEvents.length > 40) tickerEvents.pop();
+  renderTicker();
+
+  // Count for Panel 4 event-rate windows
+  currentWindowCount++;
+
+  // Reload on trade events
+  if (['sale.confirmed', 'reservation.created', 'dispatch.completed'].includes(type)) {
+    setTimeout(() => { loadInventory(); loadRevenue(); }, 1000);
+  }
+  if (type === 'reservation.created') setTimeout(loadReservations, 1200);
+}
+
+// Flush event-rate window every 30 s
+setInterval(() => {
+  const label = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  eventRateWindows.push({ label, count: currentWindowCount });
+  if (eventRateWindows.length > 10) eventRateWindows.shift();
+  currentWindowCount = 0;
+  windowStartTime = Date.now();
+  renderPanel4();
+}, 30000);
+
+// ── RENDER: TICKER ──────────────────────────────────────────────────────────
+const EVENT_ICON_MAP = {
+  'price.quoted':        'ico-tag',
+  'reservation.created': 'ico-clipboard',
+  'sale.confirmed':      'ico-check',
+  'dispatch.completed':  'ico-truck',
+  'album.updated':       'ico-camera',
+  'coins.deducted':      'ico-coin',
+};
+const EVENT_COLORS = {
+  'price.quoted':        'var(--gold)',
+  'reservation.created': 'var(--blue)',
+  'sale.confirmed':      'var(--green)',
+  'dispatch.completed':  'var(--purple)',
+  'album.updated':       'var(--amber)',
+  'coins.deducted':      'var(--red)',
+};
+
+function renderTicker() {
+  const inner = document.getElementById('tickerInner');
+  if (!tickerEvents.length) {
+    inner.innerHTML = Array(6).fill(
+      `<div class="t-item" style="color:var(--cds-text-helper);opacity:.6">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);animation:blink 1.4s infinite"></span>
+        Conectando al stream de eventos en tiempo real…
+      </div>`
+    ).join('');
+    return;
+  }
+  const items = tickerEvents.map(ev => {
+    const iconId = EVENT_ICON_MAP[ev.type] || 'ico-lightning';
+    const color  = EVENT_COLORS[ev.type]   || 'var(--cds-text-secondary)';
+    const priceStr = ev.price ? ` <span class="mono" style="color:var(--gold)">${ev.price} IC</span>` : '';
+    return `<div class="t-item">
+      <svg class="icon icon-sm" style="color:${color}" aria-hidden="true"><use href="#${iconId}"/></svg>
+      <b style="color:${color}">${ev.type}</b>
+      ${ev.playerName ? `<span>${ev.playerName}</span>` : ''}
+      ${priceStr}
+    </div>`;
+  }).join('');
+  inner.innerHTML = items + items;
+}
+
+// ── RENDER: PANEL 1 — Precio Comprometido ───────────────────────────────────
+function renderPanel1() {
+  const avg = revenue.avgSalePrice || 0;
+  document.getElementById('p1KpiVal').textContent  = avg ? avg.toFixed(0) + ' IC' : '0 IC';
+  document.getElementById('p1Sales').textContent   = (revenue.totalSales || 0).toLocaleString();
+  document.getElementById('p1Coins').textContent   = (revenue.totalIbmcoins || 0).toLocaleString();
+  const minPrice = priceTimeSeries.length
+    ? Math.min(...priceTimeSeries.map(p => p.avgPrice))
+    : 0;
+  document.getElementById('p1Min').textContent = minPrice.toFixed(0) + ' IC';
+
+  // Alert when avg price is critically low (less than 5 IC and there have been sales)
+  const alert1 = document.getElementById('p1Alert');
+  const isLow  = avg < 5 && revenue.totalSales > 0;
+  alert1.classList.toggle('active', isLow);
+  document.getElementById('p1KpiVal').style.color = isLow ? 'var(--red)' : 'var(--red)';
+
+  if (!priceTimeSeries.length) return;
+  const labels = priceTimeSeries.map(p => p.label);
+  const data   = priceTimeSeries.map(p => p.avgPrice);
+
+  if (!panel1Chart) {
+    const ctx = document.getElementById('panel1Chart');
+    if (!ctx) return;
+    panel1Chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Precio promedio venta',
+          data,
+          borderColor: '#da1e28',
+          backgroundColor: 'rgba(218,30,40,0.08)',
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointBackgroundColor: '#da1e28',
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
+            titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
+            callbacks: { label: c => 'Precio prom.: ' + (c.parsed.y || 0).toFixed(0) + ' IC' }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, maxTicksLimit: 6, maxRotation: 0 }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' } },
+          y: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => v + ' IC' }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true }
+        }
+      }
+    });
+  } else {
+    panel1Chart.data.labels = labels;
+    panel1Chart.data.datasets[0].data = data;
+    panel1Chart.update('none');
+  }
+}
+
+// ── RENDER: PANEL 2 — Stock Agotado ─────────────────────────────────────────
+function renderPanel2() {
+  if (!inventory.length) return;
+
+  const sorted = [...inventory].sort((a, b) => {
+    const aPct = a.availableStock / (a.totalStock || 1);
+    const bPct = b.availableStock / (b.totalStock || 1);
+    return aPct - bPct; // most critical first
+  });
+
+  const labels   = sorted.map(f => f.playerName || '?');
+  const data     = sorted.map(f => +(Math.max(0, Math.min(100, f.availableStock / (f.totalStock || 1) * 100)).toFixed(1)));
+  const bgColors = sorted.map(f => {
+    const pct = f.availableStock / (f.totalStock || 1);
+    if (pct < 0.10) return 'rgba(218,30,40,0.75)';
+    if (pct < 0.25) return 'rgba(178,134,0,0.75)';
+    const cat = (f.category || 'BASE').toUpperCase();
+    return (CAT_COLORS[cat] || '#4589ff') + 'bf';
+  });
+
+  const total    = inventory.reduce((s, f) => s + f.availableStock, 0);
+  const sold     = inventory.reduce((s, f) => s + f.soldStock, 0);
+  const critical = inventory.filter(f => (f.availableStock / (f.totalStock || 1)) < 0.10).length;
+  const empty    = inventory.filter(f => f.availableStock === 0).length;
+
+  document.getElementById('p2KpiVal').textContent    = critical;
+  document.getElementById('p2Available').textContent = total.toLocaleString();
+  document.getElementById('p2Sold').textContent      = sold.toLocaleString();
+  document.getElementById('p2Empty').textContent     = empty;
+
+  const alert2 = document.getElementById('p2Alert');
+  const isHalf = critical > inventory.length / 2;
+  alert2.classList.toggle('active', isHalf);
+  document.getElementById('p2KpiVal').style.color = isHalf ? 'var(--red)' : 'var(--amber)';
+
+  if (!panel2Chart) {
+    const ctx = document.getElementById('panel2Chart');
+    if (!ctx) return;
+    panel2Chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: '% Stock disponible',
+          data,
+          backgroundColor: bgColors,
+          borderWidth: 0,
+          borderRadius: 1,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
+            titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
+            callbacks: { label: c => 'Disponible: ' + c.parsed.x.toFixed(0) + '%' }
+          }
+        },
+        scales: {
+          x: { max: 100, ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => v + '%' }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' } },
+          y: { ticks: { color: '#525252', font: { size: 9 } }, grid: { display: false }, border: { display: false } }
+        }
+      }
+    });
+  } else {
+    panel2Chart.data.labels = labels;
+    panel2Chart.data.datasets[0].data = data;
+    panel2Chart.data.datasets[0].backgroundColor = bgColors;
+    panel2Chart.update('none');
+  }
+}
+
+// ── RENDER: PANEL 3 — Reservas Fantasma ────────────────────────────────────
+function renderPanel3() {
+  document.getElementById('p3KpiVal').textContent    = activeReservations.length;
+  document.getElementById('p3Backorders').textContent = backorders.length;
+  document.getElementById('p3Eta').textContent = backorders.length > 0 ? '>72h est.' : '—';
+
+  const alert3 = document.getElementById('p3Alert');
+  const hasBo  = backorders.length > 0;
+  alert3.classList.toggle('active', hasBo);
+  document.getElementById('p3KpiVal').style.color = hasBo ? 'var(--red)' : 'var(--purple)';
+
+  // Backorder list
+  const listEl = document.getElementById('p3BackorderList');
+  if (!backorders.length) {
+    listEl.innerHTML = '<div class="empty-state">Sin backorders activos</div>';
+  } else {
+    listEl.innerHTML = backorders.map(b => {
+      const name   = b.player_name || b.playerName || b.sticker_name || 'Figurita';
+      const eta    = b.estimated_delivery || b.estimatedDelivery || b.estimated_delivery_at || '';
+      const etaStr = eta ? new Date(eta).toLocaleDateString('es-MX') : '>72h';
+      const qty    = b.quantity || b.qty || 1;
+      return `<div class="backorder-item">
+        <span class="backorder-item-name">${name} <span style="font-size:10px;color:var(--cds-text-helper)">×${qty}</span></span>
+        <span class="backorder-item-eta">Est: ${etaStr}</span>
+      </div>`;
+    }).join('');
+  }
+
+  if (!reservationTimeSeries.length) return;
+  const labels       = reservationTimeSeries.map(p => p.label);
+  const activeData   = reservationTimeSeries.map(p => p.active);
+  const backorderData = reservationTimeSeries.map(p => p.backorders);
+
+  if (!panel3Chart) {
+    const ctx = document.getElementById('panel3Chart');
+    if (!ctx) return;
+    panel3Chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Reservas activas', data: activeData,   borderColor: '#6929c4', backgroundColor: 'rgba(105,41,196,.10)', borderWidth: 2, pointRadius: 2, tension: 0.4, fill: true },
+          { label: 'Backorders',       data: backorderData, borderColor: '#da1e28', backgroundColor: 'rgba(218,30,40,.08)',  borderWidth: 2, pointRadius: 2, tension: 0.4, fill: true, borderDash: [4,3] },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
+        plugins: {
+          legend: { display: true, position: 'top', labels: { color: '#6f6f6f', font: { size: 10 }, boxWidth: 12, padding: 10 } },
+          tooltip: {
+            backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
+            titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, maxTicksLimit: 6, maxRotation: 0 }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' } },
+          y: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' } }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true }
+        }
+      }
+    });
+  } else {
+    panel3Chart.data.labels = labels;
+    panel3Chart.data.datasets[0].data = activeData;
+    panel3Chart.data.datasets[1].data = backorderData;
+    panel3Chart.update('none');
+  }
+}
+
+// ── RENDER: PANEL 4 — Sistema Paralizado ────────────────────────────────────
+function renderPanel4() {
+  const active = demoState.purchasesEnabled !== false;
+
+  document.getElementById('p4KpiVal').textContent  = active ? 'ACTIVO' : 'PARALIZADO';
+  document.getElementById('p4KpiVal').style.color  = active ? 'var(--green)' : 'var(--red)';
+  document.getElementById('p4Purchases').textContent = active ? 'Habilitadas' : 'DESHABILITADAS';
+  document.getElementById('p4Purchases').style.color = active ? 'var(--green)' : 'var(--red)';
+
+  const rep = demoState.lastReplenishmentAt
+    ? new Date(demoState.lastReplenishmentAt).toLocaleDateString('es-MX')
+    : '—';
+  document.getElementById('p4Replenishment').textContent = rep;
+  document.getElementById('p4EventRate').textContent = currentWindowCount;
+
+  // Status bar
+  const iconEl  = document.getElementById('p4StatusIcon');
+  const textEl  = document.getElementById('p4StatusText');
+  const barEl   = document.getElementById('p4StatusBar');
+  if (active) {
+    iconEl.style.color  = 'var(--green)'; iconEl.querySelector('use').setAttribute('href', '#ico-check');
+    textEl.style.color  = 'var(--green)'; textEl.textContent = 'Compras habilitadas';
+    barEl.style.background = '';
+  } else {
+    iconEl.style.color  = 'var(--red)';   iconEl.querySelector('use').setAttribute('href', '#ico-lock');
+    textEl.style.color  = 'var(--red)';   textEl.textContent = 'Sistema de compras deshabilitado';
+    barEl.style.background = 'rgba(218,30,40,.05)';
+  }
+
+  const alert4 = document.getElementById('p4Alert');
+  alert4.classList.toggle('active', !active);
+
+  // Event-rate chart
+  const chartLabels = [...eventRateWindows.map(w => w.label), 'ahora'];
+  const chartData   = [...eventRateWindows.map(w => w.count), currentWindowCount];
+  const chartColors = chartData.map(c => {
+    if (!active) return 'rgba(218,30,40,0.65)';
+    return c > 5 ? 'rgba(25,128,56,0.65)' : 'rgba(178,134,0,0.65)';
+  });
+
+  if (!panel4Chart) {
+    const ctx = document.getElementById('panel4Chart');
+    if (!ctx) return;
+    panel4Chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: chartLabels,
+        datasets: [{
+          label: 'Eventos / 30s',
+          data: chartData,
+          backgroundColor: chartColors,
+          borderWidth: 0,
+          borderRadius: 1,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
+            titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
+            callbacks: { label: c => c.parsed.y + ' eventos en ventana 30s' }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, maxTicksLimit: 8, maxRotation: 0 }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' } },
+          y: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' } }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true }
+        }
+      }
+    });
+  } else {
+    panel4Chart.data.labels = chartLabels;
+    panel4Chart.data.datasets[0].data = chartData;
+    panel4Chart.data.datasets[0].backgroundColor = chartColors;
+    panel4Chart.update('none');
+  }
+}
+
+// ── RENDER: CATALOG TABLE ───────────────────────────────────────────────────
+function renderTable() {
+  const body = document.getElementById('tableBody');
+  if (!inventory.length) {
+    body.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--cds-text-helper)">Cargando inventario…</td></tr>`;
+    return;
+  }
+
+  const sorted = [...inventory].sort((a, b) => {
+    const aPct  = a.availableStock / (a.totalStock || 1);
+    const bPct  = b.availableStock / (b.totalStock || 1);
+    const aCrit = aPct < 0.10 ? 0 : aPct < 0.25 ? 1 : 2;
+    const bCrit = bPct < 0.10 ? 0 : bPct < 0.25 ? 1 : 2;
+    if (aCrit !== bCrit) return aCrit - bCrit;
+    const order = ['LEGENDARIA','ESTRELLA','BASE'];
+    const aI = order.indexOf((a.category || '').toUpperCase());
+    const bI = order.indexOf((b.category || '').toUpperCase());
+    if (aI !== bI) return aI - bI;
+    return (b.basePrice || 0) - (a.basePrice || 0);
+  });
+
+  body.innerHTML = sorted.map(f => {
+    const cat       = (f.category || 'BASE').toUpperCase();
+    const catColor  = CAT_COLORS[cat] || '#4589ff';
+    const total     = f.totalStock     || 1;
+    const avail     = f.availableStock || 0;
+    const sold      = f.soldStock      || 0;
+    const reserved  = f.reservedStock  || 0;
+    const pct       = Math.max(0, Math.min(100, avail / total * 100));
+    const isCrit    = pct < 10;
+    const isWarn    = !isCrit && pct < 25;
+    const fillColor = isCrit ? 'var(--red)' : isWarn ? 'var(--amber)' : catColor;
+    const rowClass  = isCrit ? 'row-crit' : isWarn ? 'row-warn' : '';
+    const catIconId = cat === 'LEGENDARIA' ? 'ico-star' : cat === 'ESTRELLA' ? 'ico-sparkle' : 'ico-circle';
+    const tagClass  = cat === 'LEGENDARIA' ? 'tag-leg'  : cat === 'ESTRELLA' ? 'tag-est'     : 'tag-bas';
+    const tagLabel  = cat === 'LEGENDARIA' ? 'Leg'      : cat === 'ESTRELLA' ? 'Est'          : 'Base';
+    const key       = f.stickerId || f.playerName;
+    const openPrice = openingPrices[key] || f.basePrice;
+    const varSesion = openPrice > 0 ? ((f.basePrice - openPrice) / openPrice * 100) : 0;
+    const varUp     = varSesion >= 0;
+
+    let statusLabel = 'Estable';
+    let statusColor = 'var(--cds-text-helper)';
+    if (isCrit)                { statusLabel = 'Stock crítico'; statusColor = 'var(--red)'; }
+    else if (isWarn)           { statusLabel = 'Stock bajo';    statusColor = 'var(--amber)'; }
+    else if (sold > total * 0.5) { statusLabel = 'Alta demanda';  statusColor = 'var(--blue)'; }
+
+    return `<tr class="${rowClass}">
+      <td>
+        <b>${f.country ? f.country + ' ' : ''}${f.playerName || '—'}</b>
+        ${f.team ? `<div style="font-size:10px;color:var(--cds-text-helper)">${f.team}</div>` : ''}
+      </td>
+      <td><span class="tag ${tagClass}"><svg class="icon icon-xs" aria-hidden="true"><use href="#${catIconId}"/></svg>${tagLabel}</span></td>
+      <td>
+        <div class="stock-cell">
+          <div class="stock-top">
+            <span class="stock-nums" style="color:${fillColor}">${avail} <span style="font-size:10px;font-weight:400;color:var(--cds-text-helper)">/ ${total}</span></span>
+            ${isCrit ? '<span class="crit-label">⚠ crítico</span>' : isWarn ? '<span style="font-size:10px;color:var(--amber);font-weight:700">BAJO</span>' : ''}
+          </div>
+          <div class="stock-track"><div class="stock-fill" style="width:${pct.toFixed(0)}%;background:${fillColor}"></div></div>
+          <div class="stock-pct">${pct.toFixed(0)}% disponible · ${reserved} res.</div>
+        </div>
+      </td>
+      <td>
+        <span class="price-now" style="color:${catColor}">${f.basePrice || '—'} IC</span>
+        <div class="price-open">apert: ${openPrice} IC</div>
+      </td>
+      <td><span class="${varUp ? 'up' : 'dn'}" style="font-weight:600;font-size:12px">${varUp ? '▲' : '▼'} ${Math.abs(varSesion).toFixed(1)}%</span></td>
+      <td class="mono" style="color:var(--green);text-align:center">${sold}</td>
+      <td class="mono" style="color:var(--amber);text-align:center">${reserved}</td>
+      <td style="font-size:11px;font-weight:600;color:${statusColor}">${statusLabel}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  renderTicker();
+
+  await Promise.all([
+    loadRevenue(),
+    loadInventory(),
+    loadReservations(),
+    loadBackorders(),
+    loadDemoState(),
+    loadUsers(),
+  ]);
+
+  startSSE();
+
+  setInterval(async () => {
+    await Promise.all([
+      loadRevenue(),
+      loadInventory(),
+      loadReservations(),
+      loadBackorders(),
+      loadDemoState(),
+    ]);
+  }, REFRESH_INTERVAL);
+}
+
+init();
+</script>
+</body>
+</html>
