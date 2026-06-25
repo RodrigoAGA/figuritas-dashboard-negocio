@@ -135,6 +135,16 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--cds-border-subtle-01); border-radius: 3px; }
+
+    /* ── METRICS GRID ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .metric-card { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); border-top: 3px solid var(--m-color, var(--blue)); padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.07); min-width: 0; }
+    .metric-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .metric-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--m-color, var(--blue)); flex-shrink: 0; }
+    .metric-tag { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--m-color, var(--blue)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; color: var(--cds-text-primary); line-height: 1.1; }
+    .metric-lbl { font-size: 11px; color: var(--cds-text-helper); }
+    .metric-sub { font-size: 10px; color: var(--cds-text-helper); opacity: .75; }
   </style>
 </head>
 <body>
@@ -192,6 +202,60 @@
         Eventos de negocio en tiempo real
       </div>
       <div class="ticker-scroll"><div class="ticker-inner" id="tickerInner"></div></div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics-grid" role="region" aria-label="Métricas principales">
+
+      <div class="metric-card" style="--m-color:var(--green)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Precio mín.</span></div>
+        <div class="metric-val" id="mMinPrice">—</div>
+        <div class="metric-lbl">Precio mínimo</div>
+        <div class="metric-sub">sesión actual</div>
+      </div>
+
+      <div class="metric-card" style="--m-color:var(--blue)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Precio prom.</span></div>
+        <div class="metric-val" id="mAvgPrice">—</div>
+        <div class="metric-lbl">Precio promedio</div>
+        <div class="metric-sub">por venta</div>
+      </div>
+
+      <div class="metric-card" style="--m-color:var(--gold)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Precio máx.</span></div>
+        <div class="metric-val" id="mMaxPrice">—</div>
+        <div class="metric-lbl">Precio máximo</div>
+        <div class="metric-sub">sesión actual</div>
+      </div>
+
+      <div class="metric-card" style="--m-color:var(--blue)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Ventas</span></div>
+        <div class="metric-val" id="mSales">—</div>
+        <div class="metric-lbl">Total de ventas</div>
+        <div class="metric-sub">transacciones</div>
+      </div>
+
+      <div class="metric-card" style="--m-color:var(--green)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Ganancia</span></div>
+        <div class="metric-val" id="mRevenue">—</div>
+        <div class="metric-lbl">IBMcoins totales</div>
+        <div class="metric-sub">ingresos acum.</div>
+      </div>
+
+      <div class="metric-card" id="mSlaCard" style="--m-color:var(--purple)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">SLA Entrega</span></div>
+        <div class="metric-val" id="mSla">—</div>
+        <div class="metric-lbl">Entregas en plazo</div>
+        <div class="metric-sub" id="mSlaSub">calculando…</div>
+      </div>
+
+      <div class="metric-card" id="mOverCard" style="--m-color:var(--red)">
+        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Sobreventa</span></div>
+        <div class="metric-val" id="mOverSale">—</div>
+        <div class="metric-lbl">Unidades sobrevendidas</div>
+        <div class="metric-sub" id="mOverSub">jugadores afectados: —</div>
+      </div>
+
     </div>
 
     <!-- 4 INJECTION PANELS -->
@@ -286,7 +350,7 @@
           <div class="inj-badge">04</div>
           <div class="inj-titles">
             <div class="inj-title">Estado del Sistema</div>
-            <div class="inj-subtitle">Todos los agentes · actividad de eventos y habilitación de compras</div>
+            <div class="inj-subtitle">Todos los agentes · tiempo estimado de entrega por figurita en backorder</div>
           </div>
           <div class="inj-kpi">
             <div class="inj-kpi-val" id="p4KpiVal" style="font-size:18px;color:var(--green)">ACTIVO</div>
@@ -357,7 +421,7 @@ const CAT_COLORS = { LEGENDARIA: '#c9a227', ESTRELLA: '#a56eff', BASE: '#4589ff'
 
 // ── STATE ───────────────────────────────────────────────────────────────────
 let inventory = [];
-let revenue = { totalSales: 0, totalIbmcoins: 0, avgSalePrice: 0 };
+let revenue = { totalSales: 0, totalIbmcoins: 0, avgSalePrice: 0, minSalePrice: 0, maxSalePrice: 0 };
 let activeReservations = [];
 let backorders = [];
 let demoState = { purchasesEnabled: true };
@@ -409,11 +473,14 @@ async function loadRevenue() {
     totalSales:    d.total_sales    ?? d.totalSales    ?? 0,
     totalIbmcoins: d.total_ibmcoins ?? d.totalIbmcoins ?? 0,
     avgSalePrice:  d.avg_sale_price ?? d.avgSalePrice  ?? 0,
+    minSalePrice:  d.min_sale_price ?? d.minSalePrice  ?? 0,
+    maxSalePrice:  d.max_sale_price ?? d.maxSalePrice  ?? 0,
   };
   const label = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   priceTimeSeries.push({ label, avgPrice: revenue.avgSalePrice });
   if (priceTimeSeries.length > 25) priceTimeSeries.shift();
   renderPanel1();
+  renderMetrics();
 }
 
 async function loadInventory() {
@@ -437,6 +504,7 @@ async function loadInventory() {
   });
   renderPanel2();
   renderTable();
+  renderMetrics();
 }
 
 async function loadReservations() {
@@ -457,6 +525,8 @@ async function loadBackorders() {
     return s !== 'CANCELLED' && s !== 'COMPLETED';
   });
   renderPanel3();
+  renderPanel4();
+  renderMetrics();
 }
 
 async function loadDemoState() {
@@ -633,10 +703,19 @@ function renderPanel2() {
     return aPct - bPct; // most critical first
   });
 
-  const labels   = sorted.map(f => f.playerName || '?');
-  const data     = sorted.map(f => +(Math.max(0, Math.min(100, f.availableStock / (f.totalStock || 1) * 100)).toFixed(1)));
+  const labels    = sorted.map(f => f.playerName || '?');
+  const availData = sorted.map(f => Math.max(0, f.availableStock));
+
+  // Sobreventa: reservas pendientes sin stock que las respalde (stock = 0)
+  const overData = sorted.map(f => {
+    if (f.availableStock <= 0 && (f.reservedStock || 0) > 0) return -(f.reservedStock);
+    if (f.availableStock < 0) return f.availableStock; // negativo real de la API
+    return 0;
+  });
+
   const bgColors = sorted.map(f => {
     const pct = f.availableStock / (f.totalStock || 1);
+    if (pct <= 0)   return 'rgba(218,30,40,0.25)';
     if (pct < 0.10) return 'rgba(218,30,40,0.75)';
     if (pct < 0.25) return 'rgba(178,134,0,0.75)';
     const cat = (f.category || 'BASE').toUpperCase();
@@ -658,6 +737,8 @@ function renderPanel2() {
   alert2.classList.toggle('active', isHalf);
   document.getElementById('p2KpiVal').style.color = isHalf ? 'var(--red)' : 'var(--amber)';
 
+  const hasOver = overData.some(v => v < 0);
+
   if (!panel2Chart) {
     const ctx = document.getElementById('panel2Chart');
     if (!ctx) return;
@@ -665,35 +746,63 @@ function renderPanel2() {
       type: 'bar',
       data: {
         labels,
-        datasets: [{
-          label: '% Stock disponible',
-          data,
-          backgroundColor: bgColors,
-          borderWidth: 0,
-          borderRadius: 1,
-        }]
+        datasets: [
+          {
+            label: 'Stock disponible (u.)',
+            data: availData,
+            backgroundColor: bgColors,
+            borderWidth: 0,
+            borderRadius: 1,
+          },
+          {
+            label: 'Sobreventa (u.)',
+            data: overData,
+            backgroundColor: 'rgba(218,30,40,0.72)',
+            borderWidth: 0,
+            borderRadius: 1,
+          }
+        ]
       },
       options: {
         indexAxis: 'y',
         responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: true, position: 'top',
+            labels: { color: '#6f6f6f', font: { size: 10 }, boxWidth: 12, padding: 10,
+              filter: (item, data) => {
+                if (item.datasetIndex === 1) return data.datasets[1].data.some(v => v < 0);
+                return true;
+              }
+            }
+          },
           tooltip: {
             backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
             titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
-            callbacks: { label: c => 'Disponible: ' + c.parsed.x.toFixed(0) + '%' }
+            callbacks: {
+              label: c => {
+                if (c.datasetIndex === 0) return 'Disponible: ' + c.parsed.x + ' u.';
+                const qty = Math.abs(c.parsed.x);
+                return qty > 0 ? 'Sobreventa: ' + qty + ' u. sin stock' : null;
+              }
+            }
           }
         },
         scales: {
-          x: { max: 100, ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => v + '%' }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' } },
+          x: {
+            ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => Math.abs(v) + ' u.' },
+            grid: { color: 'rgba(0,0,0,.04)' },
+            border: { color: 'rgba(0,0,0,.08)' }
+          },
           y: { ticks: { color: '#525252', font: { size: 9 } }, grid: { display: false }, border: { display: false } }
         }
       }
     });
   } else {
     panel2Chart.data.labels = labels;
-    panel2Chart.data.datasets[0].data = data;
+    panel2Chart.data.datasets[0].data = availData;
     panel2Chart.data.datasets[0].backgroundColor = bgColors;
+    panel2Chart.data.datasets[1].data = overData;
     panel2Chart.update('none');
   }
 }
@@ -798,13 +907,30 @@ function renderPanel4() {
   const alert4 = document.getElementById('p4Alert');
   alert4.classList.toggle('active', !active);
 
-  // Event-rate chart
-  const chartLabels = [...eventRateWindows.map(w => w.label), 'ahora'];
-  const chartData   = [...eventRateWindows.map(w => w.count), currentWindowCount];
-  const chartColors = chartData.map(c => {
-    if (!active) return 'rgba(218,30,40,0.65)';
-    return c > 5 ? 'rgba(25,128,56,0.65)' : 'rgba(178,134,0,0.65)';
-  });
+  // Delivery time chart per sticker (from backorders)
+  const now = new Date();
+  const deliveryItems = backorders.slice(0, 12);
+
+  let chartLabels, chartData, chartColors;
+
+  if (deliveryItems.length > 0) {
+    chartLabels = deliveryItems.map(b => b.player_name || b.playerName || b.sticker_name || 'Figurita');
+    chartData   = deliveryItems.map(b => {
+      const eta = b.estimated_delivery || b.estimatedDelivery || b.estimated_delivery_at;
+      if (!eta) return 72;
+      const diffHours = (new Date(eta) - now) / (1000 * 60 * 60);
+      return Math.max(0, Math.round(diffHours));
+    });
+    chartColors = chartData.map(h => {
+      if (h <= 24) return 'rgba(218,30,40,0.72)';
+      if (h <= 48) return 'rgba(178,134,0,0.72)';
+      return 'rgba(105,41,196,0.72)';
+    });
+  } else {
+    chartLabels = ['Sin backorders activos'];
+    chartData   = [0];
+    chartColors = ['rgba(25,128,56,0.45)'];
+  }
 
   if (!panel4Chart) {
     const ctx = document.getElementById('panel4Chart');
@@ -814,26 +940,27 @@ function renderPanel4() {
       data: {
         labels: chartLabels,
         datasets: [{
-          label: 'Eventos / 30s',
+          label: 'Horas hasta entrega',
           data: chartData,
           backgroundColor: chartColors,
           borderWidth: 0,
-          borderRadius: 1,
+          borderRadius: 2,
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
         plugins: {
           legend: { display: false },
           tooltip: {
             backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
             titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
-            callbacks: { label: c => c.parsed.y + ' eventos en ventana 30s' }
+            callbacks: { label: c => c.parsed.x + 'h hasta entrega estimada' }
           }
         },
         scales: {
-          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, maxTicksLimit: 8, maxRotation: 0 }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' } },
-          y: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' } }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true }
+          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => v + 'h' }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true },
+          y: { ticks: { color: '#525252', font: { size: 9 }, maxTicksLimit: 12 }, grid: { display: false }, border: { display: false } }
         }
       }
     });
@@ -918,6 +1045,65 @@ function renderTable() {
       <td style="font-size:11px;font-weight:600;color:${statusColor}">${statusLabel}</td>
     </tr>`;
   }).join('');
+}
+
+// ── RENDER: METRICS ──────────────────────────────────────────────────────────
+function renderMetrics() {
+  // ── Precio mínimo: API → basePrice mínimo del inventario → min de serie histórica
+  const invPrices = inventory.map(f => f.basePrice).filter(p => p > 0);
+  const minP = revenue.minSalePrice > 0
+    ? revenue.minSalePrice
+    : invPrices.length ? Math.min(...invPrices)
+    : priceTimeSeries.length ? Math.min(...priceTimeSeries.map(p => p.avgPrice))
+    : 0;
+  document.getElementById('mMinPrice').textContent = minP > 0 ? minP.toFixed(0) + ' IC' : '—';
+
+  // ── Precio promedio (revenue API)
+  const avgP = revenue.avgSalePrice;
+  document.getElementById('mAvgPrice').textContent = avgP > 0 ? avgP.toFixed(0) + ' IC' : '—';
+
+  // ── Precio máximo: API → basePrice máximo del inventario → max de serie histórica
+  const maxP = revenue.maxSalePrice > 0
+    ? revenue.maxSalePrice
+    : invPrices.length ? Math.max(...invPrices)
+    : priceTimeSeries.length ? Math.max(...priceTimeSeries.map(p => p.avgPrice))
+    : 0;
+  document.getElementById('mMaxPrice').textContent = maxP > 0 ? maxP.toFixed(0) + ' IC' : '—';
+
+  // ── Ventas totales (revenue API)
+  document.getElementById('mSales').textContent = (revenue.totalSales || 0).toLocaleString('es-MX');
+
+  // ── Ganancia (revenue API)
+  const coins = revenue.totalIbmcoins || 0;
+  document.getElementById('mRevenue').textContent = coins >= 1000
+    ? (coins / 1000).toFixed(1) + 'K IC'
+    : coins.toLocaleString('es-MX') + ' IC';
+
+  // ── SLA Entrega (backorders API)
+  const now = new Date();
+  const totalBo   = backorders.length;
+  const breached  = backorders.filter(b => {
+    const eta = b.estimated_delivery || b.estimatedDelivery || b.estimated_delivery_at;
+    return eta && new Date(eta) < now;
+  }).length;
+  const sla = totalBo > 0 ? Math.round((totalBo - breached) / totalBo * 100) : 100;
+  const slaColor = sla >= 90 ? 'var(--green)' : sla >= 70 ? 'var(--amber)' : 'var(--red)';
+  const slaEl = document.getElementById('mSla');
+  slaEl.textContent = sla + '%';
+  slaEl.style.color = slaColor;
+  document.getElementById('mSlaCard').style.setProperty('--m-color', slaColor);
+  document.getElementById('mSlaSub').textContent = totalBo > 0
+    ? (totalBo - breached) + ' de ' + totalBo + ' en plazo'
+    : 'sin backorders activos';
+
+  // ── Sobreventa (inventory API)
+  const overItems = inventory.filter(f => f.availableStock <= 0 && (f.reservedStock || 0) > 0);
+  const overTotal = overItems.reduce((s, f) => s + (f.reservedStock || 0), 0);
+  const overEl = document.getElementById('mOverSale');
+  overEl.textContent = overTotal > 0 ? overTotal + ' u.' : '0 u.';
+  overEl.style.color = overTotal > 0 ? 'var(--red)' : 'var(--green)';
+  document.getElementById('mOverCard').style.setProperty('--m-color', overTotal > 0 ? 'var(--red)' : 'var(--green)');
+  document.getElementById('mOverSub').textContent = 'jugadores afectados: ' + overItems.length;
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
