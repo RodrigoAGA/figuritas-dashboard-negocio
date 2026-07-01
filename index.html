@@ -61,34 +61,37 @@
 
     /* ── MAIN ── */
     .main { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
-
-    /* ── TICKER ── */
-    .ticker { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); border-left: 3px solid var(--gold); overflow: hidden; }
-    .ticker-hd { font-size: 10px; font-weight: 600; letter-spacing: .12em; color: var(--gold); padding: 4px 14px; background: var(--gold-10); border-bottom: 1px solid var(--gold-20); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-    .ticker-scroll { overflow: hidden; height: 32px; display: flex; align-items: center; }
-    .ticker-inner { display: flex; white-space: nowrap; animation: tick 50s linear infinite; }
-    @keyframes tick { from { transform: translateX(0) } to { transform: translateX(-50%) } }
-    .t-item { padding: 0 24px; font-size: 12px; color: var(--cds-text-secondary); display: flex; align-items: center; gap: 8px; border-right: 1px solid var(--cds-border-subtle-00); height: 32px; }
-    .t-item b { color: var(--cds-text-primary); font-weight: 500; }
-
-    /* ── INJECTION PANELS GRID ── */
-    .injection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    /* ── TWO-SECTION ROW: Stock | Tiempo de entrega ── */
+    .sections-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+    .section-group { display: flex; flex-direction: column; gap: 8px; }
+    .section-group-title { font-size: 20px; font-weight: 700; color: var(--cds-text-primary); }
 
     /* ── INJECTION PANEL ── */
-    .inj-panel { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); border-top: 4px solid var(--inj-color, var(--blue)); box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; flex-direction: column; }
+    .inj-panel { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; flex-direction: column; }
     .inj-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--cds-border-subtle-00); display: flex; align-items: flex-start; gap: 12px; }
-    .inj-badge { width: 30px; height: 30px; border-radius: 50%; background: var(--inj-color, var(--blue)); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
     .inj-titles { flex: 1; min-width: 0; }
-    .inj-title { font-size: 13px; font-weight: 700; color: var(--cds-text-primary); text-transform: uppercase; letter-spacing: .06em; }
+    .inj-title { font-size: 13px; font-weight: 700; color: var(--cds-text-primary); letter-spacing: .02em; }
     .inj-subtitle { font-size: 11px; color: var(--cds-text-helper); margin-top: 3px; line-height: 1.4; }
     .inj-kpi { text-align: right; flex-shrink: 0; }
-    .inj-kpi-val { font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 700; line-height: 1; color: var(--inj-color, var(--blue)); }
+    .inj-kpi-val { font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 700; line-height: 1; color: var(--cds-text-primary); }
     .inj-kpi-lbl { font-size: 10px; color: var(--cds-text-helper); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
     .inj-chart-area { padding: 12px 12px 4px; position: relative; }
     .inj-footer { padding: 10px 16px 12px; display: flex; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--cds-border-subtle-00); }
     .inj-stat { display: flex; flex-direction: column; gap: 2px; }
     .inj-stat-lbl { font-size: 10px; color: var(--cds-text-helper); text-transform: uppercase; letter-spacing: .07em; }
     .inj-stat-val { font-size: 15px; font-weight: 700; color: var(--cds-text-primary); font-family: 'IBM Plex Mono', monospace; }
+
+    /* ── DELIVERY MINI-CARDS ── */
+    .delivery-minigrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .delivery-card { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+    .delivery-card-lbl { font-size: 12px; font-weight: 700; color: var(--cds-text-primary); }
+    .delivery-card-val { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; color: var(--cds-text-primary); line-height: 1.1; display: flex; align-items: baseline; gap: 6px; }
+    .delivery-card-unit { font-size: 14px; font-weight: 700; color: var(--cds-text-primary); }
+    .delivery-card-sub { font-size: 10px; color: var(--cds-text-helper); }
+    .delivery-avg-panel { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; flex-direction: column; flex: 1; }
+    .delivery-avg-header { padding: 12px 16px; border-bottom: 1px solid var(--cds-border-subtle-00); }
+    .delivery-avg-title { font-size: 13px; font-weight: 700; color: var(--cds-text-primary); }
+    .delivery-avg-chart { padding: 12px 12px 4px; position: relative; flex: 1; min-height: 0; }
 
     /* ── ALERT BAR ── */
     .inj-alert { display: none; align-items: center; gap: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--red); background: rgba(218,30,40,.06); border-top: 1px solid rgba(218,30,40,.20); }
@@ -137,13 +140,14 @@
     ::-webkit-scrollbar-thumb { background: var(--cds-border-subtle-01); border-radius: 3px; }
 
     /* ── METRICS GRID ── */
-    .metrics-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    .metric-card { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); border-top: 3px solid var(--m-color, var(--blue)); padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.07); min-width: 0; }
+    .metrics-row { display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: auto 1fr; gap: 4px 8px; }
+    .metrics-group-title { font-size: 20px; font-weight: 700; color: var(--cds-text-primary); padding-bottom: 2px; align-self: end; }
+    .metric-card { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle-00); padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.07); min-width: 0; }
     .metric-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
     .metric-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--m-color, var(--blue)); flex-shrink: 0; }
-    .metric-tag { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--m-color, var(--blue)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .metric-tag { font-size: 11px; font-weight: 700; color: var(--cds-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; color: var(--cds-text-primary); line-height: 1.1; }
-    .metric-lbl { font-size: 11px; color: var(--cds-text-helper); }
+    .metric-lbl { font-size: 12px; font-weight: 700; color: var(--cds-text-primary); }
     .metric-sub { font-size: 10px; color: var(--cds-text-helper); opacity: .75; }
   </style>
 </head>
@@ -195,183 +199,120 @@
 
   <main class="main" role="main">
 
-    <!-- TICKER -->
-    <div class="ticker" role="marquee" aria-label="Eventos en tiempo real">
-      <div class="ticker-hd">
-        <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-lightning"/></svg>
-        Eventos de negocio en tiempo real
-      </div>
-      <div class="ticker-scroll"><div class="ticker-inner" id="tickerInner"></div></div>
-    </div>
+    <!-- METRICS ROW: grid 6 cols × 2 rows (fila 1 = títulos, fila 2 = cards) -->
+    <div class="metrics-row" role="region" aria-label="Métricas principales">
 
-    <!-- METRICS -->
-    <div class="metrics-grid" role="region" aria-label="Métricas principales">
+      <!-- títulos fila 1 -->
+      <div class="metrics-group-title" style="grid-column: 1 / 5;">Ventas</div>
+      <div class="metrics-group-title" style="grid-column: 5 / 7;">Precio</div>
 
-      <div class="metric-card" style="--m-color:var(--green)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Precio mín.</span></div>
-        <div class="metric-val" id="mMinPrice">—</div>
-        <div class="metric-lbl">Precio mínimo</div>
-        <div class="metric-sub">sesión actual</div>
-      </div>
-
-      <div class="metric-card" style="--m-color:var(--blue)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Precio prom.</span></div>
-        <div class="metric-val" id="mAvgPrice">—</div>
-        <div class="metric-lbl">Precio promedio</div>
-        <div class="metric-sub">por venta</div>
-      </div>
-
-      <div class="metric-card" style="--m-color:var(--gold)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Precio máx.</span></div>
-        <div class="metric-val" id="mMaxPrice">—</div>
-        <div class="metric-lbl">Precio máximo</div>
-        <div class="metric-sub">sesión actual</div>
-      </div>
-
-      <div class="metric-card" style="--m-color:var(--blue)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Ventas</span></div>
-        <div class="metric-val" id="mSales">—</div>
-        <div class="metric-lbl">Total de ventas</div>
+      <!-- cards fila 2 -->
+      <div class="metric-card">
+        <div class="metric-lbl">Ventas por minuto</div>
+        <div class="metric-val" id="mSalesRate">—</div>
         <div class="metric-sub">transacciones</div>
       </div>
 
-      <div class="metric-card" style="--m-color:var(--green)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Ganancia</span></div>
+      <div class="metric-card">
+        <div class="metric-lbl">Ventas totales</div>
+        <div class="metric-val" id="mSales">—</div>
+        <div class="metric-sub">transacciones</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-lbl">Ganancias por minuto</div>
+        <div class="metric-val" id="mRevenueRate">—</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-lbl">Ganancias totales</div>
         <div class="metric-val" id="mRevenue">—</div>
-        <div class="metric-lbl">IBMcoins totales</div>
-        <div class="metric-sub">ingresos acum.</div>
       </div>
 
-      <div class="metric-card" id="mSlaCard" style="--m-color:var(--purple)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">SLA Entrega</span></div>
-        <div class="metric-val" id="mSla">—</div>
-        <div class="metric-lbl">Entregas en plazo</div>
-        <div class="metric-sub" id="mSlaSub">calculando…</div>
+      <div class="metric-card">
+        <div class="metric-lbl">Precio mín.</div>
+        <div class="metric-val" id="mMinPrice">—</div>
       </div>
 
-      <div class="metric-card" id="mOverCard" style="--m-color:var(--red)">
-        <div class="metric-head"><div class="metric-dot"></div><span class="metric-tag">Sobreventa</span></div>
-        <div class="metric-val" id="mOverSale">—</div>
-        <div class="metric-lbl">Unidades sobrevendidas</div>
-        <div class="metric-sub" id="mOverSub">jugadores afectados: —</div>
+      <div class="metric-card">
+        <div class="metric-lbl">Precio máx.</div>
+        <div class="metric-val" id="mMaxPrice">—</div>
       </div>
 
     </div>
 
-    <!-- 4 INJECTION PANELS -->
-    <div class="injection-grid">
+    <!-- STOCK | TIEMPO DE ENTREGA -->
+    <div class="sections-row">
 
-      <!-- PANEL 1: Rendimiento de Precios -->
-      <div class="inj-panel" style="--inj-color:var(--red)" role="region" aria-label="Panel 1: Rendimiento de Precios">
-        <div class="inj-header">
-          <div class="inj-badge">01</div>
-          <div class="inj-titles">
-            <div class="inj-title">Rendimiento de Precios</div>
-            <div class="inj-subtitle">Agente Pricing &amp; Ventas · precio promedio por venta en la sesión</div>
+      <!-- SECCIÓN IZQUIERDA: Stock -->
+      <div class="section-group">
+        <div class="section-group-title">Stock</div>
+
+        <!-- Estado del Inventario -->
+        <div class="inj-panel" role="region" aria-label="Estado del Inventario">
+          <div class="inj-header">
+            <div class="inj-titles">
+              <div class="inj-title">Estado del inventario</div>
+              <div class="inj-subtitle">Agente Ventas · disponibilidad de stock por figurita</div>
+            </div>
+            <div class="inj-kpi">
+              <div class="inj-kpi-val" id="p2KpiVal">—</div>
+              <div class="inj-kpi-lbl">figuritas críticas</div>
+            </div>
           </div>
-          <div class="inj-kpi">
-            <div class="inj-kpi-val" id="p1KpiVal">—</div>
-            <div class="inj-kpi-lbl">precio prom. venta</div>
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 16px 0;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#525252;font-weight:600;">
+              <span style="display:inline-block;width:12px;height:12px;background:#c9a227;flex-shrink:0;"></span>Legendaria
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#525252;font-weight:600;">
+              <span style="display:inline-block;width:12px;height:12px;background:#a56eff;flex-shrink:0;"></span>Estrella
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#525252;font-weight:600;">
+              <span style="display:inline-block;width:12px;height:12px;background:#4589ff;flex-shrink:0;"></span>Base
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#525252;font-weight:600;">
+              <span style="display:inline-block;width:12px;height:12px;background:rgba(218,30,40,0.72);flex-shrink:0;"></span>Sobreventa
+            </span>
           </div>
-        </div>
-        <div class="inj-chart-area" style="height:240px">
-          <canvas id="panel1Chart" aria-label="Tendencia precio promedio de venta"></canvas>
-        </div>
-        <div class="inj-footer">
-          <div class="inj-stat"><span class="inj-stat-lbl">Ventas totales</span><span class="inj-stat-val" id="p1Sales">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">IBMcoins totales</span><span class="inj-stat-val" id="p1Coins">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">Precio mín. sesión</span><span class="inj-stat-val" id="p1Min">—</span></div>
-        </div>
-        <div class="inj-alert" id="p1Alert">
-          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
-          ALERTA: Precio promedio de venta por debajo del umbral mínimo
+          <div class="inj-chart-area" style="height:280px">
+            <canvas id="panel2Chart" aria-label="Stock disponible por figurita"></canvas>
+          </div>
+          <div class="inj-footer">
+            <div class="inj-stat"><span class="inj-stat-lbl">Unidades disponibles</span><span class="inj-stat-val" id="p2Available">—</span></div>
+            <div class="inj-stat"><span class="inj-stat-lbl">Unidades vendidas</span><span class="inj-stat-val" id="p2Sold">—</span></div>
+            <div class="inj-stat"><span class="inj-stat-lbl">Sin stock</span><span class="inj-stat-val" id="p2Empty">—</span></div>
+          </div>
+          <div class="inj-alert" id="p2Alert">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
+            ALERTA: Más de la mitad del catálogo en nivel de stock crítico
+          </div>
         </div>
       </div>
 
-      <!-- PANEL 2: Estado del Inventario -->
-      <div class="inj-panel" style="--inj-color:var(--amber)" role="region" aria-label="Panel 2: Estado del Inventario">
-        <div class="inj-header">
-          <div class="inj-badge" style="background:var(--amber)">02</div>
-          <div class="inj-titles">
-            <div class="inj-title">Estado del Inventario</div>
-            <div class="inj-subtitle">Agente Ventas · disponibilidad de stock por figurita</div>
-          </div>
-          <div class="inj-kpi">
-            <div class="inj-kpi-val" id="p2KpiVal" style="color:var(--amber)">—</div>
-            <div class="inj-kpi-lbl">figuritas críticas</div>
-          </div>
-        </div>
-        <div class="inj-chart-area" style="height:240px">
-          <canvas id="panel2Chart" aria-label="Stock disponible por figurita"></canvas>
-        </div>
-        <div class="inj-footer">
-          <div class="inj-stat"><span class="inj-stat-lbl">Unidades disponibles</span><span class="inj-stat-val" id="p2Available">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">Unidades vendidas</span><span class="inj-stat-val" id="p2Sold">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">Sin stock</span><span class="inj-stat-val" id="p2Empty">—</span></div>
-        </div>
-        <div class="inj-alert" id="p2Alert">
-          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
-          ALERTA: Más de la mitad del catálogo en nivel de stock crítico
-        </div>
-      </div>
+      <!-- SECCIÓN DERECHA: Tiempo de entrega -->
+      <div class="section-group">
+        <div class="section-group-title">Tiempo de entrega</div>
 
-      <!-- PANEL 3: Gestión de Reservas -->
-      <div class="inj-panel" style="--inj-color:var(--purple)" role="region" aria-label="Panel 3: Gestión de Reservas">
-        <div class="inj-header">
-          <div class="inj-badge" style="background:var(--purple)">03</div>
-          <div class="inj-titles">
-            <div class="inj-title">Gestión de Reservas</div>
-            <div class="inj-subtitle">Agente Reservas · reservas activas y órdenes con entrega diferida</div>
+        <!-- Mini-cards: Tiempo mínimo + Tiempo máximo -->
+        <div class="delivery-minigrid">
+          <div class="delivery-card">
+            <div class="delivery-card-lbl">Tiempo mínimo</div>
+            <div class="delivery-card-val"><span id="dMinVal">—</span><span class="delivery-card-unit" id="dMinUnit"></span></div>
           </div>
-          <div class="inj-kpi">
-            <div class="inj-kpi-val" id="p3KpiVal" style="color:var(--purple)">—</div>
-            <div class="inj-kpi-lbl">reservas activas</div>
+          <div class="delivery-card">
+            <div class="delivery-card-lbl">Tiempo máximo</div>
+            <div class="delivery-card-val"><span id="dMaxVal">—</span><span class="delivery-card-unit" id="dMaxUnit"></span></div>
           </div>
         </div>
-        <div class="inj-chart-area" style="height:160px">
-          <canvas id="panel3Chart" aria-label="Evolución reservas activas y backorders"></canvas>
-        </div>
-        <div class="backorder-list" id="p3BackorderList">
-          <div class="empty-state">Sin backorders activos</div>
-        </div>
-        <div class="inj-footer">
-          <div class="inj-stat"><span class="inj-stat-lbl">Backorders activos</span><span class="inj-stat-val" id="p3Backorders">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">Entrega estimada</span><span class="inj-stat-val" id="p3Eta">—</span></div>
-        </div>
-        <div class="inj-alert" id="p3Alert">
-          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-warning"/></svg>
-          ALERTA: Órdenes con entrega diferida detectadas — tiempos de espera elevados
-        </div>
-      </div>
 
-      <!-- PANEL 4: Estado del Sistema -->
-      <div class="inj-panel" style="--inj-color:var(--red)" role="region" aria-label="Panel 4: Estado del Sistema">
-        <div class="inj-header">
-          <div class="inj-badge">04</div>
-          <div class="inj-titles">
-            <div class="inj-title">Estado del Sistema</div>
-            <div class="inj-subtitle">Todos los agentes · tiempo estimado de entrega por figurita en backorder</div>
+        <!-- Tiempo promedio de entrega (gráfico) -->
+        <div class="delivery-avg-panel">
+          <div class="delivery-avg-header">
+            <div class="delivery-avg-title">Tiempo promedio de entrega <span style="font-size:10px;font-weight:400;color:var(--cds-text-helper)">(historial completo)</span></div>
           </div>
-          <div class="inj-kpi">
-            <div class="inj-kpi-val" id="p4KpiVal" style="font-size:18px;color:var(--green)">ACTIVO</div>
-            <div class="inj-kpi-lbl">estado sistema</div>
+          <div class="delivery-avg-chart">
+            <canvas id="panel4Chart" aria-label="Tiempo promedio de entrega por figurita"></canvas>
           </div>
-        </div>
-        <div class="inj-chart-area" style="height:160px">
-          <canvas id="panel4Chart" aria-label="Tasa de eventos por ventana de 30 segundos"></canvas>
-        </div>
-        <div id="p4StatusBar" style="padding:8px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--cds-border-subtle-00);border-bottom:1px solid var(--cds-border-subtle-00)">
-          <svg class="icon icon-sm" id="p4StatusIcon" aria-hidden="true" style="color:var(--green)"><use href="#ico-check"/></svg>
-          <span id="p4StatusText" style="font-size:12px;font-weight:600;color:var(--green)">Compras habilitadas</span>
-        </div>
-        <div class="inj-footer">
-          <div class="inj-stat"><span class="inj-stat-lbl">Compras</span><span class="inj-stat-val" id="p4Purchases">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">Última reposición</span><span class="inj-stat-val" id="p4Replenishment">—</span></div>
-          <div class="inj-stat"><span class="inj-stat-lbl">Eventos / 30s</span><span class="inj-stat-val" id="p4EventRate">0</span></div>
-        </div>
-        <div class="inj-alert" id="p4Alert">
-          <svg class="icon icon-sm" aria-hidden="true"><use href="#ico-lock"/></svg>
-          ALERTA CRÍTICA: Sistema de compras deshabilitado — contactar soporte técnico
         </div>
       </div>
 
@@ -421,12 +362,13 @@ const CAT_COLORS = { LEGENDARIA: '#c9a227', ESTRELLA: '#a56eff', BASE: '#4589ff'
 
 // ── STATE ───────────────────────────────────────────────────────────────────
 let inventory = [];
-let revenue = { totalSales: 0, totalIbmcoins: 0, avgSalePrice: 0, minSalePrice: 0, maxSalePrice: 0 };
+let revenue = { totalSales: 0, totalIbmcoins: 0, avgSalePrice: 0 };
 let activeReservations = [];
-let backorders = [];
+let backorders = [];         // solo QUEUED/PENDING — para panel 3 (lista activa)
+let allBackorderItems = [];  // historial completo — para panel 4 (tiempo promedio)
 let demoState = { purchasesEnabled: true };
-let tickerEvents = [];
-let openingPrices = {};
+let stickerFirstPrice = {}; // stickerId → first real paid_price from price-history
+let priceHistory = []; // [{paidPrice, occurredAt}] from /v1/dashboard/price-history
 
 // Time-series (built from polling snapshots)
 let priceTimeSeries = [];       // [{label, avgPrice}]
@@ -473,14 +415,36 @@ async function loadRevenue() {
     totalSales:    d.total_sales    ?? d.totalSales    ?? 0,
     totalIbmcoins: d.total_ibmcoins ?? d.totalIbmcoins ?? 0,
     avgSalePrice:  d.avg_sale_price ?? d.avgSalePrice  ?? 0,
-    minSalePrice:  d.min_sale_price ?? d.minSalePrice  ?? 0,
-    maxSalePrice:  d.max_sale_price ?? d.maxSalePrice  ?? 0,
   };
   const label = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   priceTimeSeries.push({ label, avgPrice: revenue.avgSalePrice });
   if (priceTimeSeries.length > 25) priceTimeSeries.shift();
-  renderPanel1();
   renderMetrics();
+}
+
+async function loadPriceHistory() {
+  const d = await apiFetch('/v1/dashboard/price-history');
+  if (!d || !d.items) return;
+  console.log('[price-history] total items:', d.items.length, '| sample[0]:', d.items[0]);
+  priceHistory = d.items
+    .filter(t => (t.transaction_type || t.transactionType) === 'SALE')
+    .map(t => ({
+      paidPrice:   t.paid_price   ?? t.paidPrice   ?? 0,
+      occurredAt:  t.occurred_at  || t.occurredAt  || '',
+    }));
+  console.log('[price-history] ventas SALE filtradas:', priceHistory.length, '| sample[0]:', priceHistory[0]);
+  // Build per-sticker first price: items come newest-first, so iterate in reverse
+  // to find the oldest real paid_price > 0 per sticker
+  const firstPrices = {};
+  for (let i = d.items.length - 1; i >= 0; i--) {
+    const t = d.items[i];
+    const id    = t.sticker_id || t.stickerId;
+    const price = t.paid_price ?? t.paidPrice ?? 0;
+    if (id && price > 0) firstPrices[id] = price;
+  }
+  stickerFirstPrice = firstPrices;
+  renderMetrics();
+  renderTable();
 }
 
 async function loadInventory() {
@@ -498,10 +462,6 @@ async function loadInventory() {
     reservedStock:  f.reserved_stock  ?? f.reservedStock   ?? 0,
     soldStock:      f.sold_stock      ?? f.soldStock       ?? 0,
   }));
-  inventory.forEach(f => {
-    const key = f.stickerId || f.playerName;
-    if (key && !(key in openingPrices)) openingPrices[key] = f.basePrice;
-  });
   renderPanel2();
   renderTable();
   renderMetrics();
@@ -518,11 +478,12 @@ async function loadReservations() {
 }
 
 async function loadBackorders() {
-  const d = await apiFetch('/v1/backorders?limit=50');
+  const d = await apiFetch('/v1/backorders');
   if (!d || !d.items) return;
+  allBackorderItems = d.items; // historial completo para tiempo promedio
   backorders = d.items.filter(b => {
     const s = (b.status || '').toUpperCase();
-    return s !== 'CANCELLED' && s !== 'COMPLETED';
+    return s === 'QUEUED' || s === 'PENDING';
   });
   renderPanel3();
   renderPanel4();
@@ -563,16 +524,12 @@ function handleStreamEvent(ev) {
   const playerName = payload.playerName || payload.player_name || payload.sticker_name || '';
   const price      = payload.price || payload.finalPrice || payload.calculatedPrice || '';
 
-  tickerEvents.unshift({ type, playerName, price, ts: new Date() });
-  if (tickerEvents.length > 40) tickerEvents.pop();
-  renderTicker();
-
   // Count for Panel 4 event-rate windows
   currentWindowCount++;
 
   // Reload on trade events
   if (['sale.confirmed', 'reservation.created', 'dispatch.completed'].includes(type)) {
-    setTimeout(() => { loadInventory(); loadRevenue(); }, 1000);
+    setTimeout(() => { loadInventory(); loadRevenue(); loadPriceHistory(); }, 1000);
   }
   if (type === 'reservation.created') setTimeout(loadReservations, 1200);
 }
@@ -604,31 +561,6 @@ const EVENT_COLORS = {
   'album.updated':       'var(--amber)',
   'coins.deducted':      'var(--red)',
 };
-
-function renderTicker() {
-  const inner = document.getElementById('tickerInner');
-  if (!tickerEvents.length) {
-    inner.innerHTML = Array(6).fill(
-      `<div class="t-item" style="color:var(--cds-text-helper);opacity:.6">
-        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);animation:blink 1.4s infinite"></span>
-        Conectando al stream de eventos en tiempo real…
-      </div>`
-    ).join('');
-    return;
-  }
-  const items = tickerEvents.map(ev => {
-    const iconId = EVENT_ICON_MAP[ev.type] || 'ico-lightning';
-    const color  = EVENT_COLORS[ev.type]   || 'var(--cds-text-secondary)';
-    const priceStr = ev.price ? ` <span class="mono" style="color:var(--gold)">${ev.price} IC</span>` : '';
-    return `<div class="t-item">
-      <svg class="icon icon-sm" style="color:${color}" aria-hidden="true"><use href="#${iconId}"/></svg>
-      <b style="color:${color}">${ev.type}</b>
-      ${ev.playerName ? `<span>${ev.playerName}</span>` : ''}
-      ${priceStr}
-    </div>`;
-  }).join('');
-  inner.innerHTML = items + items;
-}
 
 // ── RENDER: PANEL 1 — Precio Comprometido ───────────────────────────────────
 function renderPanel1() {
@@ -697,10 +629,14 @@ function renderPanel1() {
 function renderPanel2() {
   if (!inventory.length) return;
 
+  const CAT_ORDER = ['LEGENDARIA', 'ESTRELLA', 'BASE'];
   const sorted = [...inventory].sort((a, b) => {
+    const aType = CAT_ORDER.indexOf((a.category || 'BASE').toUpperCase());
+    const bType = CAT_ORDER.indexOf((b.category || 'BASE').toUpperCase());
+    if (aType !== bType) return aType - bType; // Legendaria → Estrella → Base
     const aPct = a.availableStock / (a.totalStock || 1);
     const bPct = b.availableStock / (b.totalStock || 1);
-    return aPct - bPct; // most critical first
+    return aPct - bPct; // dentro de cada tipo: más crítico primero
   });
 
   const labels    = sorted.map(f => f.playerName || '?');
@@ -767,15 +703,7 @@ function renderPanel2() {
         indexAxis: 'y',
         responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
         plugins: {
-          legend: {
-            display: true, position: 'top',
-            labels: { color: '#6f6f6f', font: { size: 10 }, boxWidth: 12, padding: 10,
-              filter: (item, data) => {
-                if (item.datasetIndex === 1) return data.datasets[1].data.some(v => v < 0);
-                return true;
-              }
-            }
-          },
+          legend: { display: false },
           tooltip: {
             backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
             titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
@@ -875,62 +803,83 @@ function renderPanel3() {
   }
 }
 
-// ── RENDER: PANEL 4 — Sistema Paralizado ────────────────────────────────────
+// ── RENDER: TIEMPO DE ENTREGA ────────────────────────────────────────────────
 function renderPanel4() {
-  const active = demoState.purchasesEnabled !== false;
-
-  document.getElementById('p4KpiVal').textContent  = active ? 'ACTIVO' : 'PARALIZADO';
-  document.getElementById('p4KpiVal').style.color  = active ? 'var(--green)' : 'var(--red)';
-  document.getElementById('p4Purchases').textContent = active ? 'Habilitadas' : 'DESHABILITADAS';
-  document.getElementById('p4Purchases').style.color = active ? 'var(--green)' : 'var(--red)';
-
-  const rep = demoState.lastReplenishmentAt
-    ? new Date(demoState.lastReplenishmentAt).toLocaleDateString('es-MX')
-    : '—';
-  document.getElementById('p4Replenishment').textContent = rep;
-  document.getElementById('p4EventRate').textContent = currentWindowCount;
-
-  // Status bar
-  const iconEl  = document.getElementById('p4StatusIcon');
-  const textEl  = document.getElementById('p4StatusText');
-  const barEl   = document.getElementById('p4StatusBar');
-  if (active) {
-    iconEl.style.color  = 'var(--green)'; iconEl.querySelector('use').setAttribute('href', '#ico-check');
-    textEl.style.color  = 'var(--green)'; textEl.textContent = 'Compras habilitadas';
-    barEl.style.background = '';
-  } else {
-    iconEl.style.color  = 'var(--red)';   iconEl.querySelector('use').setAttribute('href', '#ico-lock');
-    textEl.style.color  = 'var(--red)';   textEl.textContent = 'Sistema de compras deshabilitado';
-    barEl.style.background = 'rgba(218,30,40,.05)';
-  }
-
-  const alert4 = document.getElementById('p4Alert');
-  alert4.classList.toggle('active', !active);
-
-  // Delivery time chart per sticker (from backorders)
+  // Campo real de la API: estimated_physical_delivery_at
   const now = new Date();
-  const deliveryItems = backorders.slice(0, 12);
 
-  let chartLabels, chartData, chartColors;
-
-  if (deliveryItems.length > 0) {
-    chartLabels = deliveryItems.map(b => b.player_name || b.playerName || b.sticker_name || 'Figurita');
-    chartData   = deliveryItems.map(b => {
-      const eta = b.estimated_delivery || b.estimatedDelivery || b.estimated_delivery_at;
-      if (!eta) return 72;
-      const diffHours = (new Date(eta) - now) / (1000 * 60 * 60);
-      return Math.max(0, Math.round(diffHours));
-    });
-    chartColors = chartData.map(h => {
-      if (h <= 24) return 'rgba(218,30,40,0.72)';
-      if (h <= 48) return 'rgba(178,134,0,0.72)';
-      return 'rgba(105,41,196,0.72)';
-    });
-  } else {
-    chartLabels = ['Sin backorders activos'];
-    chartData   = [0];
-    chartColors = ['rgba(25,128,56,0.45)'];
+  function daysLabel(days) {
+    if (days === null || days === undefined) return { val: '—', unit: '' };
+    if (days < 1) return { val: '<1', unit: 'Día' };
+    return { val: String(days), unit: days === 1 ? 'Día' : 'Días' };
   }
+
+  // ── Helper: plazo logístico planificado para un backorder ─────────────────
+  // estimated_physical_delivery_at - created_at para todos los status
+  function deliveryDays(b) {
+    // Siempre usar el plazo logístico planificado (estimated_physical_delivery_at - created_at)
+    // independientemente del status — refleja el tiempo de entrega al cliente, no el procesamiento interno
+    const eta     = b.estimated_physical_delivery_at;
+    const created = b.created_at;
+    if (eta && created) {
+      const ms = new Date(eta) - new Date(created);
+      return Math.max(0, ms / (1000 * 60 * 60 * 24));
+    }
+    return null;
+  }
+
+  // ── Min / Max cards (historial completo) ──────────────────────────────────
+  const allDaysRaw = allBackorderItems.map(deliveryDays).filter(d => d !== null);
+  if (allDaysRaw.length > 0) {
+    const minLbl = daysLabel(Math.round(Math.min(...allDaysRaw)));
+    const maxLbl = daysLabel(Math.round(Math.max(...allDaysRaw)));
+    document.getElementById('dMinVal').textContent  = minLbl.val;
+    document.getElementById('dMinUnit').textContent = minLbl.unit;
+    document.getElementById('dMaxVal').textContent  = maxLbl.val;
+    document.getElementById('dMaxUnit').textContent = maxLbl.unit;
+  } else {
+    document.getElementById('dMinVal').textContent  = '—';
+    document.getElementById('dMinUnit').textContent = '';
+    document.getElementById('dMaxVal').textContent  = '—';
+    document.getElementById('dMaxUnit').textContent = '';
+  }
+
+  // ── Agrupar por tipo y calcular promedio (historial completo) ─────────────
+  const TYPE_ORDER  = ['LEGENDARIA', 'ESTRELLA', 'BASE'];
+  const TYPE_LABELS = { LEGENDARIA: 'Legendaria', ESTRELLA: 'Estrella', BASE: 'Base' };
+  const TYPE_COLORS = { LEGENDARIA: 'rgba(201,162,39,0.80)', ESTRELLA: 'rgba(165,110,255,0.80)', BASE: 'rgba(69,137,255,0.80)' };
+
+  // Lookup de categoría por sticker_id desde inventory
+  const catLookup = {};
+  inventory.forEach(f => {
+    const cat = (f.category || 'BASE').toUpperCase();
+    if (f.stickerId)  catLookup[f.stickerId]  = cat;
+    if (f.playerName) catLookup[f.playerName] = cat;
+  });
+
+  const groups = { LEGENDARIA: [], ESTRELLA: [], BASE: [] };
+  allBackorderItems.forEach(b => {
+    const days = deliveryDays(b);
+    if (days === null) return;
+    const rawCat = b.category || b.sticker_category
+                 || catLookup[b.sticker_id]   || catLookup[b.stickerId]
+                 || catLookup[b.player_name]  || catLookup[b.playerName]
+                 || 'BASE';
+    const cat = rawCat.toUpperCase();
+    const bucket = groups[cat] !== undefined ? cat : 'BASE';
+    groups[bucket].push(days);
+  });
+
+  // Siempre mostrar los 3 tipos:
+  // - con backorders → promedio de días planificados
+  // - sin backorders → 0 (entrega inmediata, nunca entró en cola)
+  const chartLabels = TYPE_ORDER.map(t => TYPE_LABELS[t]);
+  const chartData   = TYPE_ORDER.map(t => {
+    const arr = groups[t];
+    if (!arr.length) return 0;
+    return parseFloat((arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(1));
+  });
+  const chartColors = TYPE_ORDER.map(t => TYPE_COLORS[t]);
 
   if (!panel4Chart) {
     const ctx = document.getElementById('panel4Chart');
@@ -940,11 +889,11 @@ function renderPanel4() {
       data: {
         labels: chartLabels,
         datasets: [{
-          label: 'Horas hasta entrega',
+          label: 'Días promedio hasta entrega',
           data: chartData,
           backgroundColor: chartColors,
           borderWidth: 0,
-          borderRadius: 2,
+          borderRadius: 4,
         }]
       },
       options: {
@@ -955,18 +904,18 @@ function renderPanel4() {
           tooltip: {
             backgroundColor: '#262626', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
             titleColor: '#8d8d8d', bodyColor: '#f4f4f4',
-            callbacks: { label: c => c.parsed.x + 'h hasta entrega estimada' }
+            callbacks: { label: c => c.parsed.x.toFixed(1) + ' días promedio de entrega' }
           }
         },
         scales: {
-          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => v + 'h' }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true },
-          y: { ticks: { color: '#525252', font: { size: 9 }, maxTicksLimit: 12 }, grid: { display: false }, border: { display: false } }
+          x: { ticks: { color: '#6f6f6f', font: { size: 9, family: 'IBM Plex Mono' }, callback: v => v + 'd' }, grid: { color: 'rgba(0,0,0,.04)' }, border: { color: 'rgba(0,0,0,.08)' }, beginAtZero: true },
+          y: { ticks: { color: '#525252', font: { size: 11, weight: '600' } }, grid: { display: false }, border: { display: false } }
         }
       }
     });
   } else {
-    panel4Chart.data.labels = chartLabels;
-    panel4Chart.data.datasets[0].data = chartData;
+    panel4Chart.data.labels   = chartLabels;
+    panel4Chart.data.datasets[0].data            = chartData;
     panel4Chart.data.datasets[0].backgroundColor = chartColors;
     panel4Chart.update('none');
   }
@@ -1008,8 +957,7 @@ function renderTable() {
     const catIconId = cat === 'LEGENDARIA' ? 'ico-star' : cat === 'ESTRELLA' ? 'ico-sparkle' : 'ico-circle';
     const tagClass  = cat === 'LEGENDARIA' ? 'tag-leg'  : cat === 'ESTRELLA' ? 'tag-est'     : 'tag-bas';
     const tagLabel  = cat === 'LEGENDARIA' ? 'Leg'      : cat === 'ESTRELLA' ? 'Est'          : 'Base';
-    const key       = f.stickerId || f.playerName;
-    const openPrice = openingPrices[key] || f.basePrice;
+    const openPrice = stickerFirstPrice[f.stickerId] || f.basePrice;
     const varSesion = openPrice > 0 ? ((f.basePrice - openPrice) / openPrice * 100) : 0;
     const varUp     = varSesion >= 0;
 
@@ -1049,69 +997,48 @@ function renderTable() {
 
 // ── RENDER: METRICS ──────────────────────────────────────────────────────────
 function renderMetrics() {
-  // ── Precio mínimo: API → basePrice mínimo del inventario → min de serie histórica
-  const invPrices = inventory.map(f => f.basePrice).filter(p => p > 0);
-  const minP = revenue.minSalePrice > 0
-    ? revenue.minSalePrice
-    : invPrices.length ? Math.min(...invPrices)
-    : priceTimeSeries.length ? Math.min(...priceTimeSeries.map(p => p.avgPrice))
-    : 0;
-  document.getElementById('mMinPrice').textContent = minP > 0 ? minP.toFixed(0) + ' IC' : '—';
+  // ── Ventas totales — directo de /v1/dashboard/revenue
+  const totalSales = revenue.totalSales || 0;
+  document.getElementById('mSales').textContent = totalSales.toLocaleString('es-MX');
 
-  // ── Precio promedio (revenue API)
-  const avgP = revenue.avgSalePrice;
-  document.getElementById('mAvgPrice').textContent = avgP > 0 ? avgP.toFixed(0) + ' IC' : '—';
+  // ── Ventas por minuto y Ganancias por minuto — tasa sobre toda la sesión
+  let salesRate = 0, revenueRate = 0;
+  if (priceHistory.length >= 2) {
+    const timestamps = priceHistory.map(t => new Date(t.occurredAt).getTime()).filter(ts => !isNaN(ts));
+    const spanMs = timestamps.length >= 2 ? Math.max(...timestamps) - Math.min(...timestamps) : 0;
+    const spanMin = Math.max(spanMs / 60000, 1);
+    salesRate = parseFloat((priceHistory.length / spanMin).toFixed(4));
+    const totalPaid = priceHistory.reduce((s, t) => s + (t.paidPrice || 0), 0);
+    revenueRate = parseFloat((totalPaid / spanMin).toFixed(1));
+  }
 
-  // ── Precio máximo: API → basePrice máximo del inventario → max de serie histórica
-  const maxP = revenue.maxSalePrice > 0
-    ? revenue.maxSalePrice
-    : invPrices.length ? Math.max(...invPrices)
-    : priceTimeSeries.length ? Math.max(...priceTimeSeries.map(p => p.avgPrice))
-    : 0;
-  document.getElementById('mMaxPrice').textContent = maxP > 0 ? maxP.toFixed(0) + ' IC' : '—';
+  document.getElementById('mSalesRate').textContent = priceHistory.length > 0 ? salesRate.toFixed(4) : '—';
 
-  // ── Ventas totales (revenue API)
-  document.getElementById('mSales').textContent = (revenue.totalSales || 0).toLocaleString('es-MX');
-
-  // ── Ganancia (revenue API)
+  // ── Ganancias totales — directo de /v1/dashboard/revenue (totalIbmcoins)
   const coins = revenue.totalIbmcoins || 0;
   document.getElementById('mRevenue').textContent = coins >= 1000
     ? (coins / 1000).toFixed(1) + 'K IC'
     : coins.toLocaleString('es-MX') + ' IC';
 
-  // ── SLA Entrega (backorders API)
-  const now = new Date();
-  const totalBo   = backorders.length;
-  const breached  = backorders.filter(b => {
-    const eta = b.estimated_delivery || b.estimatedDelivery || b.estimated_delivery_at;
-    return eta && new Date(eta) < now;
-  }).length;
-  const sla = totalBo > 0 ? Math.round((totalBo - breached) / totalBo * 100) : 100;
-  const slaColor = sla >= 90 ? 'var(--green)' : sla >= 70 ? 'var(--amber)' : 'var(--red)';
-  const slaEl = document.getElementById('mSla');
-  slaEl.textContent = sla + '%';
-  slaEl.style.color = slaColor;
-  document.getElementById('mSlaCard').style.setProperty('--m-color', slaColor);
-  document.getElementById('mSlaSub').textContent = totalBo > 0
-    ? (totalBo - breached) + ' de ' + totalBo + ' en plazo'
-    : 'sin backorders activos';
+  document.getElementById('mRevenueRate').textContent = priceHistory.length > 0
+    ? revenueRate.toLocaleString('es-MX') + ' IC'
+    : '—';
 
-  // ── Sobreventa (inventory API)
-  const overItems = inventory.filter(f => f.availableStock <= 0 && (f.reservedStock || 0) > 0);
-  const overTotal = overItems.reduce((s, f) => s + (f.reservedStock || 0), 0);
-  const overEl = document.getElementById('mOverSale');
-  overEl.textContent = overTotal > 0 ? overTotal + ' u.' : '0 u.';
-  overEl.style.color = overTotal > 0 ? 'var(--red)' : 'var(--green)';
-  document.getElementById('mOverCard').style.setProperty('--m-color', overTotal > 0 ? 'var(--red)' : 'var(--green)');
-  document.getElementById('mOverSub').textContent = 'jugadores afectados: ' + overItems.length;
+  // ── Precio mínimo — menor paid_price real de toda la sesión (price-history)
+  const paidPrices = priceHistory.map(t => t.paidPrice).filter(p => p > 0);
+  const minP = paidPrices.length ? Math.min(...paidPrices) : 0;
+  document.getElementById('mMinPrice').textContent = minP > 0 ? minP.toLocaleString('es-MX') + ' IC' : '—';
+
+  // ── Precio máximo — mayor paid_price real de toda la sesión (price-history)
+  const maxP = paidPrices.length ? Math.max(...paidPrices) : 0;
+  document.getElementById('mMaxPrice').textContent = maxP > 0 ? maxP.toLocaleString('es-MX') + ' IC' : '—';
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init() {
-  renderTicker();
-
   await Promise.all([
     loadRevenue(),
+    loadPriceHistory(),
     loadInventory(),
     loadReservations(),
     loadBackorders(),
@@ -1124,6 +1051,7 @@ async function init() {
   setInterval(async () => {
     await Promise.all([
       loadRevenue(),
+      loadPriceHistory(),
       loadInventory(),
       loadReservations(),
       loadBackorders(),
